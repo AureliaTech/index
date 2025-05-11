@@ -4,3 +4,6 @@
 [submodule "infra"]
 	path = infra
 	url = git@github.com:AureliaTech/infra.git
+[submodule "services/webapp"]
+	path = services/webapp
+	url = git@github.com:AureliaTech/webapp.git

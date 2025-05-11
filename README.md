@@ -15,7 +15,7 @@ Git superproject containing the folder structure, sub repositories and dev tools
 ## Installation
 Start by cloning the repository with all the submodules:
 ```sh
-git clone --recursive-submodules git@github.com:AureliaTech/_index.git ~/dev/aurelia
+git clone --recurse-submodules git@github.com:AureliaTech/_index.git ~/dev/aurelia
 ```
 
 Extend the project git configuration with yours. Any setting on your global git config file will be applied to this repository also.

@@ -7,3 +7,6 @@
 [submodule "services/webapp"]
 	path = services/webapp
 	url = git@github.com:AureliaTech/webapp.git
+[submodule "services/landing"]
+	path = services/landing
+	url = git@github.com:AureliaTech/landing.git

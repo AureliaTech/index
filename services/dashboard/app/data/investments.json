@@ -1,0 +1,38 @@
+[
+  {
+    "id": "atos",
+    "name": "Atos Consulting"
+  },
+  {
+    "id": "carrefour",
+    "name": "Carrefour"
+  },
+  {
+    "id": "daimler",
+    "name": "Daimler"
+  },
+  {
+    "id": "fastned",
+    "name": "Fastned"
+  },
+  {
+    "id": "inditex",
+    "name": "Inditex"
+  },
+  {
+    "id": "mayo",
+    "name": "Mayo Clinic"
+  },
+  {
+    "id": "micron",
+    "name": "Micron Technology"
+  },
+  {
+    "id": "saks",
+    "name": "Saks"
+  },
+  {
+    "id": "vestas",
+    "name": "Vestas Energy"
+  }
+]

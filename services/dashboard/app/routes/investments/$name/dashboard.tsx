@@ -14,13 +14,16 @@ function RouteComponent() {
     <div className="p-6">
       <h1 className="text-2xl font-bold capitalize mb-4">{name}</h1>
       {/* Filters */}
-      <div className="mb-6 flex gap-4">
-        <select className="rounded border p-2" defaultValue="monthly">
+      <div className="mb-6 flex gap-4 ">
+        <select className="border rounded-full p-2 pr-8 border-neutral-200 dark:border-neutral-700" defaultValue="monthly">
           <option value="monthly">Monthly</option>
           <option value="quarterly">Quarterly</option>
           <option value="annual">Annual</option>
         </select>
-        <select className="rounded border p-2" defaultValue="last-year">
+        <select
+          className="border rounded-full p-2 border-neutral-200 dark:border-neutral-700"
+          defaultValue="last-year"
+        >
           <option value="last-year">Last Year</option>
           <option value="last-2-years">Last 2 Years</option>
           <option value="last-5-years">Last 5 Years</option>
@@ -30,7 +33,7 @@ function RouteComponent() {
       {/* Charts Grid */}
       <div className="grid grid-cols-2 gap-6">
         {/* Net Debt */}
-        <div className="rounded-lg border p-4">
+        <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-4">
           <h3 className="mb-4 text-lg font-semibold">Net Debt</h3>
           <Line
             data={{
@@ -56,7 +59,7 @@ function RouteComponent() {
         </div>
 
         {/* Revenue */}
-        <div className="rounded-lg border p-4">
+        <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 max-h-fit">
           <h3 className="mb-4 text-lg font-semibold">Revenue</h3>
           <Bar
             data={{
@@ -86,7 +89,7 @@ function RouteComponent() {
         </div>
 
         {/* Capex Invested */}
-        <div className="rounded-lg border p-4">
+        <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 max-h-fit">
           <h3 className="mb-4 text-lg font-semibold">Capex Invested</h3>
           <Line
             data={{
@@ -111,7 +114,7 @@ function RouteComponent() {
         </div>
 
         {/* Operating Charges by Geography */}
-        <div className="rounded-lg border p-4">
+        <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 max-h-fit">
           <h3 className="mb-4 text-lg font-semibold">Operating Charges by Geography</h3>
           <Doughnut
             data={{

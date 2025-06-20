@@ -1,101 +1,160 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import { Plus, Search, ArrowUpDown, MoreVertical } from "lucide-react";
 
-export const Route = createFileRoute('/investments/$name/deal-team-highlights')(
+export const Route = createFileRoute("/investments/$name/deal-team-highlights")(
   {
     component: RouteComponent,
+  }
+);
+
+type LogTag = {
+  label: string;
+  color: string; // Tailwind bg text classes prefix e.g. blue
+};
+
+interface LogEntry {
+  id: string;
+  title: string;
+  description: string;
+  tags: LogTag[];
+  author: string;
+  date: string; // ISO date
+}
+
+const logs: LogEntry[] = [
+  {
+    id: "log1",
+    title: "Call with new CEO",
+    description:
+      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
+    tags: [{ label: "Other", color: "gray" }],
+    author: "Monica Gomez Acebo",
+    date: "2025-01-01",
   },
-)
+  {
+    id: "log2",
+    title: "Integration for greater efficiency",
+    description:
+      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
+    tags: [
+      { label: "Competition", color: "blue" },
+      { label: "Global Economy", color: "purple" },
+      { label: "Other", color: "gray" },
+    ],
+    author: "Monica Gomez Acebo",
+    date: "2024-10-20",
+  },
+  {
+    id: "log3",
+    title: "Internal Meeting",
+    description:
+      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
+    tags: [{ label: "Other", color: "gray" }],
+    author: "Monica Gomez Acebo",
+    date: "2024-06-10",
+  },
+  {
+    id: "log4",
+    title: "Bank of America approach",
+    description:
+      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
+    tags: [{ label: "Exit Strategy", color: "yellow" }],
+    author: "Monica Gomez Acebo",
+    date: "2024-03-23",
+  },
+];
+
+function TagBadge({ tag }: { tag: LogTag }) {
+  const bg = `${tag.color}-100`;
+  const text = `${tag.color}-800`;
+  return (
+    <span
+      className={`rounded-full px-2.5 py-0.5 text-xs font-medium bg-${bg} text-${text}`}
+    >
+      {tag.label}
+    </span>
+  );
+}
 
 function RouteComponent() {
   return (
-    <div className="p-6">
-      {/* Header with Create Button */}
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Deal Team Highlights</h2>
-        <button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-          Create New Log
+    <div className="p-6 space-y-6">
+      {/* Top right button */}
+      <div className="flex justify-end">
+        <button className="flex items-center gap-2 rounded-md border border-neutral-200 dark:border-neutral-700 px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900">
+          <Plus className="w-4 h-4" /> Add Comment
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="mb-6 flex gap-4">
-        <select className="rounded border p-2">
-          <option>All Types</option>
-          <option>Meetings</option>
-          <option>Updates</option>
-          <option>Decisions</option>
+      {/* Search & filters row */}
+      <div className="flex items-center gap-4">
+        {/* Search */}
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+          <input
+            type="text"
+            placeholder="Search by keyword"
+            className="w-full pl-10 pr-4 py-2 rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-sm placeholder-neutral-500 dark:placeholder-neutral-400 focus:outline-none"
+          />
+        </div>
+
+        {/* Year filter */}
+        <select className="rounded-full border border-neutral-200 dark:border-neutral-700 py-2 px-3 text-sm bg-white dark:bg-neutral-900">
+          <option>Year</option>
+          <option>2025</option>
+          <option>2024</option>
         </select>
-        <select className="rounded border p-2">
-          <option>All Authors</option>
-          <option>John Doe</option>
-          <option>Jane Smith</option>
+
+        {/* Item filter */}
+        <select className="rounded-full border border-neutral-200 dark:border-neutral-700 py-2 px-3 text-sm bg-white dark:bg-neutral-900">
+          <option>Item</option>
+          <option>Meeting</option>
+          <option>Update</option>
+          <option>Decision</option>
         </select>
-        <input 
-          type="date" 
-          className="rounded border p-2"
-          placeholder="Date range"
-        />
+
+        {/* Sort */}
+        <button className="rounded-full border border-neutral-200 dark:border-neutral-700 p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+          <ArrowUpDown className="w-4 h-4 text-neutral-600 dark:text-neutral-300" />
+        </button>
       </div>
 
-      {/* Message List */}
-      <div className="space-y-4">
-        {/* Message Item */}
-        <div className="rounded-lg border p-4">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Board Meeting Summary</h3>
-            <span className="text-sm text-gray-500">2 days ago</span>
-          </div>
-          <p className="mb-3 text-gray-600">
-            Discussed Q4 performance and strategic initiatives for 2024. Key decisions made regarding market expansion.
-          </p>
-          <div className="mb-3 flex gap-2">
-            <span className="rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">Meeting</span>
-            <span className="rounded-full bg-green-100 px-3 py-1 text-sm text-green-800">Board</span>
-          </div>
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <span>By John Doe</span>
-            <span>3 comments</span>
-          </div>
-        </div>
+      {/* Logs list */}
+      <div className="space-y-6">
+        {logs.map((log) => (
+          <div
+            key={log.id}
+            className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-4"
+          >
+            {/* Title row */}
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+                  {log.title}
+                </h3>
+                {/* tags inline */}
+                {log.tags.map((t) => (
+                  <TagBadge key={t.label} tag={t} />
+                ))}
+              </div>
+              <MoreVertical className="w-4 h-4 text-neutral-400" />
+            </div>
 
-        {/* Message Item */}
-        <div className="rounded-lg border p-4">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Financial Update</h3>
-            <span className="text-sm text-gray-500">1 week ago</span>
-          </div>
-          <p className="mb-3 text-gray-600">
-            Monthly financial report shows 15% growth in revenue. New customer acquisition targets exceeded.
-          </p>
-          <div className="mb-3 flex gap-2">
-            <span className="rounded-full bg-purple-100 px-3 py-1 text-sm text-purple-800">Update</span>
-            <span className="rounded-full bg-yellow-100 px-3 py-1 text-sm text-yellow-800">Finance</span>
-          </div>
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <span>By Jane Smith</span>
-            <span>1 comment</span>
-          </div>
-        </div>
+            <p className="text-neutral-600 dark:text-neutral-400 mb-3 text-sm">
+              {log.description}
+            </p>
 
-        {/* Message Item */}
-        <div className="rounded-lg border p-4">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Strategic Decision</h3>
-            <span className="text-sm text-gray-500">2 weeks ago</span>
+            <div className="text-sm text-neutral-500 dark:text-neutral-400">
+              {log.author} -{" "}
+              {Intl.DateTimeFormat("en-US", {
+                month: "2-digit",
+                day: "2-digit",
+                year: "numeric",
+              }).format(new Date(log.date))}
+            </div>
           </div>
-          <p className="mb-3 text-gray-600">
-            Approved the expansion into European markets. Initial focus on UK and Germany.
-          </p>
-          <div className="mb-3 flex gap-2">
-            <span className="rounded-full bg-red-100 px-3 py-1 text-sm text-red-800">Decision</span>
-            <span className="rounded-full bg-indigo-100 px-3 py-1 text-sm text-indigo-800">Strategy</span>
-          </div>
-          <div className="flex items-center justify-between text-sm text-gray-500">
-            <span>By John Doe</span>
-            <span>5 comments</span>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
-  )
+  );
 }

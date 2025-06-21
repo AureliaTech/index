@@ -69,12 +69,18 @@ interface LogEntry {
   date: string; // ISO date
 }
 
+const colourClasses: Record<string, string> = {
+  blue: "bg-blue-100  text-blue-800",
+  green: "bg-green-100 text-green-800",
+  yellow: "bg-yellow-100 text-yellow-800",
+  gray: "bg-gray-200  text-gray-800",
+  red: "bg-red-100 text-red-800",
+};
+
 function TagBadge({ tag }: { tag: LogTag }) {
-  const bg = `${tag.color}-100`;
-  const text = `${tag.color}-800`;
   return (
     <span
-      className={`rounded-full px-2.5 py-0.5 text-xs font-medium bg-${bg} text-${text}`}
+      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${colourClasses[tag.color]}`}
     >
       {tag.label}
     </span>
@@ -146,7 +152,7 @@ function RouteComponent() {
     }
   };
 
-  // Transform comments to LogEntry format expected by UI 
+  // Transform comments to LogEntry format expected by UI
   const logs: LogEntry[] = commentsList.map((comment, idx) => ({
     id: `log${idx}`,
     title: comment.title,
@@ -188,7 +194,8 @@ function RouteComponent() {
         }
       };
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     const selectedLabels = allLabels.filter((l) => selected.includes(l.id));
@@ -252,7 +259,7 @@ function RouteComponent() {
       <div className="flex justify-end">
         <button
           onClick={() => setDrawerOpen(true)}
-          className="flex items-center gap-2 rounded-md border border-neutral-200 dark:border-neutral-700 px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900"
+          className="flex items-center gap-2 rounded-md border border-neutral-200 dark:border-neutral-700 px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900 hover:cursor-pointer"
         >
           <Plus className="w-4 h-4" /> Add Comment
         </button>

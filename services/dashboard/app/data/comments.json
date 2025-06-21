@@ -1,28 +1,5 @@
 [
   {
-    "title": "Prueba",
-    "content": "Siu",
-    "date": "2025-06-21T18:51:22.066Z",
-    "author": "Alvaro Bernar",
-    "labels": [
-      {
-        "id": 1,
-        "name": "Competition",
-        "color": "red"
-      },
-      {
-        "id": 2,
-        "name": "Strategy",
-        "color": "blue"
-      },
-      {
-        "id": 3,
-        "name": "Other",
-        "color": "grey"
-      }
-    ]
-  },
-  {
     "title": "Call with new CEO",
     "date": "2025-01-01T10:00:00Z",
     "content": "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",

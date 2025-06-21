@@ -108,11 +108,4 @@ export const Route = createFileRoute('/funds/$name')({
       ],
     };
   },
-  component: RouteComponent,
 })
-
-function RouteComponent() {
-  const { name } = Route.useParams();
-
-  return <div>{name}</div>
-}

@@ -1,11 +1,59 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Search, ArrowUpDown, MoreVertical } from "lucide-react";
+import React, { useState } from "react";
+import Drawer from "../../../components/Drawer";
+// Server-side helpers
+import { createServerFn } from "@tanstack/react-start";
+import * as fs from "node:fs/promises";
 
-export const Route = createFileRoute("/investments/$name/deal-team-highlights")(
-  {
-    component: RouteComponent,
-  }
-);
+// ---------------------------------------------------------------------------
+// Server functions -----------------------------------------------------------
+// ---------------------------------------------------------------------------
+
+const getLabels = createServerFn({ method: "GET" }).handler(async () => {
+  const labels = JSON.parse(await fs.readFile("app/data/labels.json", "utf8"));
+  return labels;
+});
+
+const getComments = createServerFn({ method: "GET" }).handler(async () => {
+  const comments = JSON.parse(
+    await fs.readFile("app/data/comments.json", "utf8")
+  );
+  return comments;
+});
+
+// Add a new comment helper ----------------------------------------------------------
+const addComment = createServerFn({ method: "POST" })
+  .validator((payload: { data: Comment }) => payload)
+  .handler(async ({ data }) => {
+    const file = "app/data/comments.json";
+    const comments: Comment[] = JSON.parse(await fs.readFile(file, "utf8"));
+
+    // Prepend new comment for recency (optional)
+    const updated = [data, ...comments];
+
+    await fs.writeFile(file, JSON.stringify(updated, null, 2));
+
+    return data;
+  });
+
+// ---------------------------------------------------------------------------
+// Types ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+
+type CommentLabel = {
+  id: number;
+  name: string;
+  color: string;
+};
+
+interface Comment {
+  title: string;
+  date: string; // ISO date
+  content: string;
+  author: string;
+  labels: CommentLabel[];
+}
 
 type LogTag = {
   label: string;
@@ -21,49 +69,6 @@ interface LogEntry {
   date: string; // ISO date
 }
 
-const logs: LogEntry[] = [
-  {
-    id: "log1",
-    title: "Call with new CEO",
-    description:
-      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
-    tags: [{ label: "Other", color: "gray" }],
-    author: "Monica Gomez Acebo",
-    date: "2025-01-01",
-  },
-  {
-    id: "log2",
-    title: "Integration for greater efficiency",
-    description:
-      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
-    tags: [
-      { label: "Competition", color: "blue" },
-      { label: "Global Economy", color: "purple" },
-      { label: "Other", color: "gray" },
-    ],
-    author: "Monica Gomez Acebo",
-    date: "2024-10-20",
-  },
-  {
-    id: "log3",
-    title: "Internal Meeting",
-    description:
-      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
-    tags: [{ label: "Other", color: "gray" }],
-    author: "Monica Gomez Acebo",
-    date: "2024-06-10",
-  },
-  {
-    id: "log4",
-    title: "Bank of America approach",
-    description:
-      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
-    tags: [{ label: "Exit Strategy", color: "yellow" }],
-    author: "Monica Gomez Acebo",
-    date: "2024-03-23",
-  },
-];
-
 function TagBadge({ tag }: { tag: LogTag }) {
   const bg = `${tag.color}-100`;
   const text = `${tag.color}-800`;
@@ -76,15 +81,252 @@ function TagBadge({ tag }: { tag: LogTag }) {
   );
 }
 
+type LoaderData = {
+  labels: CommentLabel[];
+  comments: Comment[];
+};
+
+export const Route = createFileRoute("/investments/$name/deal-team-highlights")(
+  {
+    //Load data from server
+    loader: async (): Promise<LoaderData> => {
+      const [labels, comments] = await Promise.all([
+        getLabels(),
+        getComments(),
+      ]);
+
+      return { labels, comments };
+    },
+    component: RouteComponent,
+  }
+);
+
 function RouteComponent() {
+  const { comments, labels } = Route.useLoaderData() as LoaderData;
+
+  // Local state to support optimistic updates (by now) --------------------------------
+  const [commentsList, setCommentsList] = useState<Comment[]>(comments);
+
+  // Form refs (avoid re-renders)
+  const titleRef = React.useRef<HTMLInputElement>(null);
+  const descriptionRef = React.useRef<HTMLTextAreaElement>(null);
+  const [selectedLabelIds, setSelectedLabelIds] = useState<number[]>([]);
+
+  const resetForm = () => {
+    if (titleRef.current) titleRef.current.value = "";
+    if (descriptionRef.current) descriptionRef.current.value = "";
+    setSelectedLabelIds([]);
+  };
+
+  const toggleLabel = (id: number) => {
+    setSelectedLabelIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const newComment: Comment = {
+      title: titleRef.current?.value || "",
+      content: descriptionRef.current?.value || "",
+      date: new Date().toISOString(),
+      author: "Alvaro Bernar",
+      labels: labels.filter((l) => selectedLabelIds.includes(l.id)),
+    };
+
+    try {
+      await addComment({ data: newComment } as any);
+      setCommentsList((prev) => [newComment, ...prev]);
+      setDrawerOpen(false);
+      resetForm();
+    } catch (err) {
+      console.error(err);
+      // Handle error (we could display toast)
+    }
+  };
+
+  // Transform comments to LogEntry format expected by UI 
+  const logs: LogEntry[] = commentsList.map((comment, idx) => ({
+    id: `log${idx}`,
+    title: comment.title,
+    description: comment.content,
+    tags: comment.labels.map((l) => ({
+      label: l.name,
+      color: l.color === "grey" ? "gray" : l.color,
+    })),
+    author: comment.author,
+    date: comment.date,
+  }));
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // -------------------------------------------------------------------------
+  // Tag multi-select component ----------------------------------------------
+  // -------------------------------------------------------------------------
+
+  function TagMultiSelect({
+    allLabels,
+    selected,
+    onToggle,
+  }: {
+    allLabels: CommentLabel[];
+    selected: number[];
+    onToggle: (id: number) => void;
+  }) {
+    const [open, setOpen] = useState(false);
+
+    // Close dropdown on outside click ---------------------------------------
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    React.useEffect(() => {
+      const handleClickOutside = (e: MouseEvent) => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(e.target as Node)
+        ) {
+          setOpen(false);
+        }
+      };
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const selectedLabels = allLabels.filter((l) => selected.includes(l.id));
+
+    return (
+      <div className="relative" ref={containerRef}>
+        {/* Input area */}
+        <div
+          className="min-h-10 w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 px-2 py-1 flex flex-wrap gap-1 items-center cursor-pointer"
+          onClick={() => setOpen((o) => !o)}
+        >
+          {selectedLabels.length === 0 ? (
+            <span className="text-sm text-neutral-500">Select labels</span>
+          ) : (
+            selectedLabels.map((l) => {
+              const color = l.color === "grey" ? "gray" : l.color;
+              return (
+                <span
+                  key={l.id}
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium bg-${color}-100 text-${color}-800`}
+                >
+                  {l.name}
+                </span>
+              );
+            })
+          )}
+        </div>
+
+        {/* Dropdown list */}
+        {open && (
+          <div className="absolute z-10 mt-1 w-full rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 shadow-lg max-h-52 overflow-auto p-1">
+            {allLabels.map((l) => {
+              const isSel = selected.includes(l.id);
+              const color = l.color === "grey" ? "gray" : l.color;
+              return (
+                <button
+                  key={l.id}
+                  type="button"
+                  onClick={() => onToggle(l.id)}
+                  className={`w-full flex items-center gap-2 px-2 py-1 rounded-md text-left hover:bg-neutral-100 dark:hover:bg-neutral-700 ${
+                    isSel ? "bg-neutral-100 dark:bg-neutral-700" : ""
+                  }`}
+                >
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium bg-${color}-100 text-${color}-800`}
+                  >
+                    {l.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* Top right button */}
       <div className="flex justify-end">
-        <button className="flex items-center gap-2 rounded-md border border-neutral-200 dark:border-neutral-700 px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900">
+        <button
+          onClick={() => setDrawerOpen(true)}
+          className="flex items-center gap-2 rounded-md border border-neutral-200 dark:border-neutral-700 px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900"
+        >
           <Plus className="w-4 h-4" /> Add Comment
         </button>
       </div>
+
+      {/* Drawer for adding a comment */}
+      <Drawer
+        open={drawerOpen}
+        onClose={() => {
+          setDrawerOpen(false);
+          resetForm();
+        }}
+        title="Add Comment"
+      >
+        {/* Simple form layout */}
+        <form className="space-y-4" onSubmit={handleSave}>
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="title">
+              Title
+            </label>
+            <input
+              id="title"
+              type="text"
+              placeholder="Comment title"
+              ref={titleRef}
+              required
+              className="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 px-3 py-2 text-sm focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label
+              className="block text-sm font-medium mb-1"
+              htmlFor="description"
+            >
+              Description
+            </label>
+            <textarea
+              id="description"
+              rows={4}
+              placeholder="Write your comment..."
+              ref={descriptionRef}
+              required
+              className="w-full rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 px-3 py-2 text-sm focus:outline-none"
+            />
+          </div>
+
+          {/* Labels multi-select */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Labels</label>
+            <TagMultiSelect
+              allLabels={labels}
+              selected={selectedLabelIds}
+              onToggle={toggleLabel}
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(false)}
+              className="rounded-md border border-neutral-200 dark:border-neutral-700 px-3 py-1 text-sm bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="rounded-md bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 px-3 py-1 text-sm hover:opacity-90"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      </Drawer>
 
       {/* Search & filters row */}
       <div className="flex items-center gap-4">

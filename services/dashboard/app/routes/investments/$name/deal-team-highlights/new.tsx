@@ -42,7 +42,6 @@ function RouteComponent() {
   const navigate = Route.useNavigate();
   const router = useRouter();
 
-  // --------------------------- Submit handler ------------------------------
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -73,8 +72,6 @@ function RouteComponent() {
       // TODO: surface error to user
     }
   };
-
-  // ---------------------- Render form --------------------------
 
   return (
     <Drawer

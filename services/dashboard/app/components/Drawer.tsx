@@ -2,24 +2,14 @@ import React, { ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 interface DrawerProps {
-  /** Controls visibility of the drawer */
   open: boolean;
-  /** Callback fired when the user clicks on the overlay or the close button */
   onClose: () => void;
-  /** Optional fixed width utility class (defaults to w-96) */
   widthClass?: string;
-  /** Optional ARIA label/title for the drawer */
   title?: string;
-  /** Drawer body */
   children: ReactNode;
 }
 
-/**
- * Basic right-anchored slide-over panel.
- *
- * Renders through a React portal so it is mounted at the document <body> level and
- * therefore not affected by parent stacking-contexts.
- */
+
 export function Drawer({
   open,
   onClose,
@@ -34,7 +24,7 @@ export function Drawer({
       {/* Overlay */}
       <div
         aria-label="Close drawer overlay"
-        className="flex-1 bg-black/50 "
+        className="flex-1 bg-neutral-900/50 dark:bg-neutral-950/80"
         onClick={onClose}
       />
 

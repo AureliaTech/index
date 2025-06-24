@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Search, ArrowUpDown, MoreVertical } from "lucide-react";
-import { Outlet, useNavigate } from "@tanstack/react-router";
+import { Outlet, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import * as fs from "node:fs/promises";
 
@@ -70,7 +70,6 @@ export const Route = createFileRoute("/investments/$name/deal-team-highlights")(
 function RouteComponent() {
   const { comments } = Route.useLoaderData();
 
-
   // Transform comments to LogEntry format expected by UI
   const logs: LogEntry[] = comments.map((comment, idx) => ({
     id: `log${idx}`,
@@ -84,24 +83,19 @@ function RouteComponent() {
     date: comment.date,
   }));
 
-  const navigate = useNavigate();
   const { name } = Route.useParams();
 
   return (
     <div className="p-6 space-y-6">
       {/* Top right button */}
       <div className="flex justify-end">
-        <button
-          onClick={() =>
-            navigate({
-              to: "/investments/$name/deal-team-highlights/new",
-              params: { name },
-            })
-          }
+        <Link
+          to="/investments/$name/deal-team-highlights/new"
+          params={{ name }}
           className="flex items-center gap-2 rounded-md border border-neutral-200 dark:border-neutral-700 px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900 hover:cursor-pointer"
         >
           <Plus className="w-4 h-4" /> Add Comment
-        </button>
+        </Link>
       </div>
 
       {/* Search & filters row */}

@@ -24,8 +24,11 @@ import {
   CircleHelp,
   CircleUser,
 } from "lucide-react";
-import { useState, createContext, useContext, useEffect } from "react";
+import { useState, createContext, useContext, useEffect, Fragment } from "react";
 import * as fs from "node:fs/promises";
+import { useRouter } from "@tanstack/react-router";
+import logo from "../assets/aurelia-logo.png?url";
+import { createServerFn } from "@tanstack/react-start";
 
 const getMenuData = createServerFn({
   method: "GET",
@@ -147,27 +150,29 @@ function Wrapper({ children }: { children?: React.ReactNode }) {
   );
 }
 
+interface ItemProps {
+  children?: React.ReactNode;
+  icon?: React.ElementType;
+  to: string;
+  collapsable?: boolean;
+  exact?: boolean;
+}
+
 function Item({
   children,
   icon,
   to,
   collapsable,
   exact = true,
-}: {
-  children?: React.ReactNode;
-  icon?: React.ReactNode;
-  to: string;
-  collapsable?: boolean;
-  exact?: boolean;
-}) {
-  const Icon = icon;
+}: ItemProps) {
+  const IconComponent = icon;
   const { isCollapsed, isTransitioning } = useContext(MenuContext);
 
   if (!collapsable && isCollapsed) return null;
   if (isTransitioning)
     return (
       <div className="flex gap-2 p-2 rounded-md animate-pulse">
-        {Icon ? (
+        {IconComponent ? (
           <>
             <div className="h-5 w-5 bg-neutral-200 dark:bg-neutral-700 rounded" />
             <div className="h-5 w-full bg-neutral-200 dark:bg-neutral-700 rounded" />
@@ -189,7 +194,7 @@ function Item({
         exact,
       }}
     >
-      {Icon && <Icon className="h-5 w-5" />}
+      {IconComponent && <IconComponent className="h-5 w-5" />}
       {isCollapsed ? null : children}
     </Link>
   );
@@ -223,7 +228,7 @@ function Breadcrumbs() {
           return null;
 
         return (
-          <>
+          <Fragment key={breadcrumb.url}>
             <ChevronRight className="h-3 w-3" />
             <Link
               to={breadcrumb.url}
@@ -231,7 +236,7 @@ function Breadcrumbs() {
             >
               {breadcrumb.breadcrumb}
             </Link>
-          </>
+          </Fragment>
         );
       })}
     </div>
@@ -243,8 +248,7 @@ const Menu = {
   Item: Item,
 };
 
-import logo from "../assets/aurelia-logo.png?url";
-import { createServerFn } from "@tanstack/react-start";
+
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   const { investments, funds, favorites } = Route.useLoaderData();
@@ -311,7 +315,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               Favorite Investments
             </Menu.Item>
             {favorites.map((favorite) => (
-              <Menu.Item to={`/investments/${favorite.id}`}>
+              <Menu.Item key={favorite.id} to={`/investments/${favorite.id}`}>
                 {/* {JSON.stringify(favorite)} */}
                 <span className="pl-7">{favorite.name}</span>
               </Menu.Item>
@@ -372,13 +376,8 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               <div className="flex items-center gap-2 relative">
                 <div className="flex items-center gap-3">
                   <Breadcrumbs />
+                  <EllipsisMenu />
                   <button className="p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer">
-                    <Ellipsis className="h-4 w-4" />
-                  </button>
-                  <button className="p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer">
-                    {/* <span className="text-amber-200">
-                      <Star className="h-4 w-4" fill="currentColor" />
-                    </span> */}
                     <Star className="h-4 w-4" />
                   </button>
                 </div>
@@ -486,6 +485,7 @@ function Tabs() {
     <nav className="flex items-center gap-2 flex-1 justify-end">
       {tabs.map((tab) => (
         <Link
+          key={tab.to}
           activeProps={{ className: "opacity-100" }}
           className="opacity-50 text-nowrap p-1 px-2 text-xs rounded-md bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
           {...tab}
@@ -494,5 +494,51 @@ function Tabs() {
         </Link>
       ))}
     </nav>
+  );
+}
+
+function EllipsisMenu() {
+  const [open, setOpen] = useState(false);
+  const matches = useMatches();
+  const router = useRouter();
+
+  // Determine if current location is company-performance and get investment name.
+  const companyMatch = matches.find((m) => m.pathname.includes("/investments"));
+  const investmentName = (companyMatch?.params as any)?.name;
+  const isCompany = Boolean(companyMatch);
+
+  const toggle = () => {
+    if (isCompany) setOpen(!open);
+  };
+
+  const handleTemplateConfig = () => {
+    if (!investmentName) return;
+    router.navigate({
+      to: "/investments/$name/template-config",
+      params: { name: investmentName },
+      replace: true,
+    });
+    setOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={toggle}
+        className="p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
+      >
+        <Ellipsis className="h-4 w-4" />
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded shadow-md z-50">
+          <button
+            onClick={handleTemplateConfig}
+            className="block w-full text-left px-4 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700"
+          >
+            Template Config
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

@@ -23,6 +23,7 @@ import { Route as FundsNameImport } from './routes/funds/$name'
 import { Route as InvestmentsNameIndexImport } from './routes/investments/$name/index'
 import { Route as FundsNameIndexImport } from './routes/funds/$name/index'
 import { Route as InvestmentsNameValuationImport } from './routes/investments/$name/valuation'
+import { Route as InvestmentsNameTemplateConfigImport } from './routes/investments/$name/template-config'
 import { Route as InvestmentsNameShareholdersStructureImport } from './routes/investments/$name/shareholders-structure'
 import { Route as InvestmentsNameReportsImport } from './routes/investments/$name/reports'
 import { Route as InvestmentsNameInvestmentSummaryImport } from './routes/investments/$name/investment-summary'
@@ -110,6 +111,13 @@ const InvestmentsNameValuationRoute = InvestmentsNameValuationImport.update({
   path: '/valuation',
   getParentRoute: () => InvestmentsNameRoute,
 } as any)
+
+const InvestmentsNameTemplateConfigRoute =
+  InvestmentsNameTemplateConfigImport.update({
+    id: '/template-config',
+    path: '/template-config',
+    getParentRoute: () => InvestmentsNameRoute,
+  } as any)
 
 const InvestmentsNameShareholdersStructureRoute =
   InvestmentsNameShareholdersStructureImport.update({
@@ -352,6 +360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvestmentsNameShareholdersStructureImport
       parentRoute: typeof InvestmentsNameImport
     }
+    '/investments/$name/template-config': {
+      id: '/investments/$name/template-config'
+      path: '/template-config'
+      fullPath: '/investments/$name/template-config'
+      preLoaderRoute: typeof InvestmentsNameTemplateConfigImport
+      parentRoute: typeof InvestmentsNameImport
+    }
     '/investments/$name/valuation': {
       id: '/investments/$name/valuation'
       path: '/valuation'
@@ -421,6 +436,7 @@ interface InvestmentsNameRouteChildren {
   InvestmentsNameInvestmentSummaryRoute: typeof InvestmentsNameInvestmentSummaryRoute
   InvestmentsNameReportsRoute: typeof InvestmentsNameReportsRoute
   InvestmentsNameShareholdersStructureRoute: typeof InvestmentsNameShareholdersStructureRoute
+  InvestmentsNameTemplateConfigRoute: typeof InvestmentsNameTemplateConfigRoute
   InvestmentsNameValuationRoute: typeof InvestmentsNameValuationRoute
   InvestmentsNameIndexRoute: typeof InvestmentsNameIndexRoute
 }
@@ -437,6 +453,7 @@ const InvestmentsNameRouteChildren: InvestmentsNameRouteChildren = {
   InvestmentsNameReportsRoute: InvestmentsNameReportsRoute,
   InvestmentsNameShareholdersStructureRoute:
     InvestmentsNameShareholdersStructureRoute,
+  InvestmentsNameTemplateConfigRoute: InvestmentsNameTemplateConfigRoute,
   InvestmentsNameValuationRoute: InvestmentsNameValuationRoute,
   InvestmentsNameIndexRoute: InvestmentsNameIndexRoute,
 }
@@ -482,6 +499,7 @@ export interface FileRoutesByFullPath {
   '/investments/$name/investment-summary': typeof InvestmentsNameInvestmentSummaryRoute
   '/investments/$name/reports': typeof InvestmentsNameReportsRoute
   '/investments/$name/shareholders-structure': typeof InvestmentsNameShareholdersStructureRoute
+  '/investments/$name/template-config': typeof InvestmentsNameTemplateConfigRoute
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
   '/funds/$name/': typeof FundsNameIndexRoute
   '/investments/$name/': typeof InvestmentsNameIndexRoute
@@ -506,6 +524,7 @@ export interface FileRoutesByTo {
   '/investments/$name/investment-summary': typeof InvestmentsNameInvestmentSummaryRoute
   '/investments/$name/reports': typeof InvestmentsNameReportsRoute
   '/investments/$name/shareholders-structure': typeof InvestmentsNameShareholdersStructureRoute
+  '/investments/$name/template-config': typeof InvestmentsNameTemplateConfigRoute
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
   '/funds/$name': typeof FundsNameIndexRoute
   '/investments/$name': typeof InvestmentsNameIndexRoute
@@ -535,6 +554,7 @@ export interface FileRoutesById {
   '/investments/$name/investment-summary': typeof InvestmentsNameInvestmentSummaryRoute
   '/investments/$name/reports': typeof InvestmentsNameReportsRoute
   '/investments/$name/shareholders-structure': typeof InvestmentsNameShareholdersStructureRoute
+  '/investments/$name/template-config': typeof InvestmentsNameTemplateConfigRoute
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
   '/funds/$name/': typeof FundsNameIndexRoute
   '/investments/$name/': typeof InvestmentsNameIndexRoute
@@ -565,6 +585,7 @@ export interface FileRouteTypes {
     | '/investments/$name/investment-summary'
     | '/investments/$name/reports'
     | '/investments/$name/shareholders-structure'
+    | '/investments/$name/template-config'
     | '/investments/$name/valuation'
     | '/funds/$name/'
     | '/investments/$name/'
@@ -588,6 +609,7 @@ export interface FileRouteTypes {
     | '/investments/$name/investment-summary'
     | '/investments/$name/reports'
     | '/investments/$name/shareholders-structure'
+    | '/investments/$name/template-config'
     | '/investments/$name/valuation'
     | '/funds/$name'
     | '/investments/$name'
@@ -615,6 +637,7 @@ export interface FileRouteTypes {
     | '/investments/$name/investment-summary'
     | '/investments/$name/reports'
     | '/investments/$name/shareholders-structure'
+    | '/investments/$name/template-config'
     | '/investments/$name/valuation'
     | '/funds/$name/'
     | '/investments/$name/'
@@ -701,6 +724,7 @@ export const routeTree = rootRoute
         "/investments/$name/investment-summary",
         "/investments/$name/reports",
         "/investments/$name/shareholders-structure",
+        "/investments/$name/template-config",
         "/investments/$name/valuation",
         "/investments/$name/"
       ]
@@ -763,6 +787,10 @@ export const routeTree = rootRoute
     },
     "/investments/$name/shareholders-structure": {
       "filePath": "investments/$name/shareholders-structure.tsx",
+      "parent": "/investments/$name"
+    },
+    "/investments/$name/template-config": {
+      "filePath": "investments/$name/template-config.tsx",
       "parent": "/investments/$name"
     },
     "/investments/$name/valuation": {

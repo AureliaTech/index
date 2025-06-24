@@ -8,7 +8,19 @@ const getComments = createServerFn({ method: "GET" }).handler(async () => {
   const comments = await JSON.parse(
     await fs.readFile("app/data/comments.json", "utf8")
   );
-  return comments as Comment[];
+  const logs: LogEntry[] = comments.map((comment, idx) => ({
+    id: `log${idx}`,
+    title: comment.title,
+    description: comment.content,
+    tags: comment.labels.map((l) => ({
+      label: l.name,
+      color: l.color === "grey" ? "gray" : l.color,
+    })),
+    author: comment.author,
+    date: comment.date,
+  }));
+  
+  return logs;
 });
 
 export type CommentLabel = {
@@ -59,29 +71,15 @@ function TagBadge({ tag }: { tag: LogTag }) {
 
 export const Route = createFileRoute("/investments/$name/deal-team-highlights")(
   {
-    loader: async (): Promise<{ comments: Comment[] }> => {
-      const comments = await getComments();
-      return { comments };
+    loader: async (): Promise<LogEntry[]> => {
+      return await getComments();
     },
     component: RouteComponent,
   }
 );
 
 function RouteComponent() {
-  const { comments } = Route.useLoaderData();
-
-  // Transform comments to LogEntry format expected by UI
-  const logs: LogEntry[] = comments.map((comment, idx) => ({
-    id: `log${idx}`,
-    title: comment.title,
-    description: comment.content,
-    tags: comment.labels.map((l) => ({
-      label: l.name,
-      color: l.color === "grey" ? "gray" : l.color,
-    })),
-    author: comment.author,
-    date: comment.date,
-  }));
+  const logs = Route.useLoaderData();
 
   const { name } = Route.useParams();
 

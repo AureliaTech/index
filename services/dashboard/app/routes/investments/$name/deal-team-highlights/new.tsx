@@ -1,31 +1,29 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { createServerFn } from "@tanstack/react-start";
 import * as fs from "node:fs/promises";
 import Drawer from "../../../../components/Drawer";
 import { CommentLabel, Comment } from "../deal-team-highlights";
 
-
 const getLabels = createServerFn({ method: "GET" }).handler(async () => {
   const labels: CommentLabel[] = JSON.parse(
-    await fs.readFile("app/data/labels.json", "utf8"),
+    await fs.readFile("app/data/labels.json", "utf8")
   );
   return { labels };
 });
 
 const addComment = createServerFn({ method: "POST" })
-  .validator((payload: { data: Comment }) => payload)
-  .handler(async ({ data }) => {
+  .validator((c: Comment) => c)
+  .handler(async (ctx) => {
     const file = "app/data/comments.json";
     const comments: Comment[] = JSON.parse(await fs.readFile(file, "utf8"));
-
+    const data = ctx.data;
     const updated = [data, ...comments];
 
     await fs.writeFile(file, JSON.stringify(updated, null, 2));
 
     return { success: true };
   });
-
 
 export const Route = createFileRoute(
   "/investments/$name/deal-team-highlights/new"
@@ -40,7 +38,6 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { labels } = Route.useLoaderData();
   const navigate = Route.useNavigate();
-  const router = useRouter();
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,19 +54,12 @@ function RouteComponent() {
       author: "Alvaro Bernar",
       labels: labels.filter((l) => selectedIds.includes(l.id)),
     };
-
     try {
-      await addComment({ data: newComment } as any);
-      // Invalidate parent list so it reloads latest comments
-      await router.invalidate({
-        filter: (match) =>
-          match.id === "/investments/$name/deal-team-highlights",
-      });
+      await addComment({ data: newComment });
 
       navigate({ to: ".." });
-    } catch (err) {
-      console.error(err);
-      // TODO: surface error to user
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -95,7 +85,10 @@ function RouteComponent() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="description">
+          <label
+            className="block text-sm font-medium mb-1"
+            htmlFor="description"
+          >
             Description
           </label>
           <textarea

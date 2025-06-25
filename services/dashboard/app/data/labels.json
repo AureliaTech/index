@@ -1,0 +1,6 @@
+[
+  { "id": 1, "name": "Competition", "color": "red" },
+  { "id": 2, "name": "Strategy", "color": "blue" },
+  { "id": 3, "name": "Other", "color": "grey" },
+  { "id": 4, "name": "Exit Strategy", "color": "yellow" }
+]

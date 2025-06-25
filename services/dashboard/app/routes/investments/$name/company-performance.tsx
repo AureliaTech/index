@@ -18,9 +18,7 @@ import {
 import { getTemplate } from "./template-config";
 import { useRouter } from "@tanstack/react-router";
 
-// ---------------------------------------------
-// Server Action: Upload an Excel template and save it
-// ---------------------------------------------
+
 export const uploadTemplate = createServerFn({ method: "POST" })
   .validator((data: { name: string; content: string }) => data)
   .handler(async ({ data }) => {
@@ -31,9 +29,7 @@ export const uploadTemplate = createServerFn({ method: "POST" })
     return { success: true } as const;
   });
 
-//---------------------------------------------
-// Route: Company Performance
-//---------------------------------------------
+
 export const Route = createFileRoute("/investments/$name/company-performance")({
   component: RouteComponent,
   loader: async ({ params }) => {
@@ -42,11 +38,8 @@ export const Route = createFileRoute("/investments/$name/company-performance")({
   },
 });
 
-//---------------------------------------------
-// Route Component: Company Performance
-//---------------------------------------------
+
 function RouteComponent() {
-  // Params & loader data
   const { name: companyName } = Route.useParams();
   const router = useRouter();
   const { hasTemplate } = Route.useLoaderData() as { hasTemplate: boolean };
@@ -111,51 +104,6 @@ function RouteComponent() {
 
   return (
     <div className="relative flex-1 p-4" ref={wrapperRef}>
-      {/* <div className="absolute inset-0 top-0 bottom-0 left-0 right-0 overflow-scroll">
-        <table className="min-w-full border-collapse text-sm">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="sticky left-0 z-10 border border-gray-200 bg-gray-50 p-2 text-left font-semibold w-48">
-              </th>
-              {Array.from({ length: 24 }, (_, i) => {
-                const date = new Date();
-                date.setMonth(date.getMonth() - (23 - i));
-                return (
-                  <th key={i} className="sticky top-0 z-10 border border-gray-200 bg-gray-50 p-2 text-center font-semibold">
-                    {date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              { label: 'Revenue', values: Array.from({ length: 24 }, () => Math.floor(Math.random() * 1000000) + 500000) },
-              { label: 'Cost of Goods Sold', values: Array.from({ length: 24 }, () => Math.floor(Math.random() * 600000) + 300000) },
-              { label: 'Gross Profit', values: Array.from({ length: 24 }, (_, i) => Math.floor(Math.random() * 400000) + 200000) },
-              { label: 'Operating Expenses', values: Array.from({ length: 24 }, () => Math.floor(Math.random() * 200000) + 100000) },
-              { label: 'EBITDA', values: Array.from({ length: 24 }, () => Math.floor(Math.random() * 300000) + 150000) },
-              { label: 'Depreciation & Amortization', values: Array.from({ length: 24 }, () => Math.floor(Math.random() * 50000) + 25000) },
-              { label: 'Operating Income', values: Array.from({ length: 24 }, () => Math.floor(Math.random() * 250000) + 125000) },
-              { label: 'Interest Expense', values: Array.from({ length: 24 }, () => Math.floor(Math.random() * 30000) + 15000) },
-              { label: 'Income Before Tax', values: Array.from({ length: 24 }, () => Math.floor(Math.random() * 220000) + 110000) },
-              { label: 'Income Tax Expense', values: Array.from({ length: 24 }, () => Math.floor(Math.random() * 50000) + 25000) },
-              { label: 'Net Income', values: Array.from({ length: 24 }, () => Math.floor(Math.random() * 170000) + 85000) },
-            ].map((row, rowIndex) => (
-              <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                <td className="sticky left-0 z-10 border border-gray-200 bg-inherit p-2 font-medium">
-                  {row.label}
-                </td>
-                {row.values.map((value, colIndex) => (
-                  <td key={colIndex} className="border border-gray-200 p-2 text-right">
-                    ${value.toLocaleString()}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div> */}
       {/* ---------- Company Performance Table OR Placeholder ---------- */}
       {templateExists ? (
         <>

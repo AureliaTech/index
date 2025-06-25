@@ -42,7 +42,7 @@ export function Drawer({
               type="button"
               onClick={onClose}
               aria-label="Close drawer"
-              className="rounded-md p-1 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              className="rounded-md hover:cursor-pointer p-1 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

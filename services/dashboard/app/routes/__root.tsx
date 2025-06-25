@@ -2,7 +2,6 @@
 import type { ReactNode } from "react";
 import {
   Outlet,
-  createRootRoute,
   HeadContent,
   Scripts,
   useMatches,
@@ -248,8 +247,6 @@ const Menu = {
   Item: Item,
 };
 
-
-
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   const { investments, funds, favorites } = Route.useLoaderData();
 
@@ -323,33 +320,15 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             <Menu.Item icon={Search} collapsable to="/investments">
               Search Investments
             </Menu.Item>
-            <Menu.Item to="/investments/atos" exact={false}>
-              <span className="pl-7">Atos Consulting</span>
-            </Menu.Item>
-            <Menu.Item to="/investments/carrefour" exact={false}>
-              <span className="pl-7">Carrefour</span>
-            </Menu.Item>
-            <Menu.Item to="/investments/daimler" exact={false}>
-              <span className="pl-7">Daimler</span>
-            </Menu.Item>
-            <Menu.Item to="/investments/fastned" exact={false}>
-              <span className="pl-7">Fastned</span>
-            </Menu.Item>
-            <Menu.Item to="/investments/inditex" exact={false}>
-              <span className="pl-7">Inditex</span>
-            </Menu.Item>
-            <Menu.Item to="/investments/mayo" exact={false}>
-              <span className="pl-7">Mayo Clinic</span>
-            </Menu.Item>
-            <Menu.Item to="/investments/micron" exact={false}>
-              <span className="pl-7">Micron Technology</span>
-            </Menu.Item>
-            <Menu.Item to="/investments/saks" exact={false}>
-              <span className="pl-7">Saks</span>
-            </Menu.Item>
-            <Menu.Item to="/investments/vestas" exact={false}>
-              <span className="pl-7">Vestas Energy</span>
-            </Menu.Item>
+            {investments.map((inv: any) => (
+              <Menu.Item
+                key={inv.id ?? inv.slug}
+                to={`/investments/${inv.id ?? inv.slug}`}
+                exact={false}
+              >
+                <span className="pl-7">{inv.name}</span>
+              </Menu.Item>
+            ))}
             <Menu.Item icon={HandCoins} collapsable to="/funds">
               Funds
             </Menu.Item>

@@ -2,12 +2,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import * as fs from "node:fs/promises";
 import { useState, useRef, useCallback, startTransition } from "react";
 import { ArrowUpToLine } from "lucide-react";
-import { uploadTemplate } from "./company-performance";
 import { createServerFn } from "@tanstack/react-start";
 
-//---------------------------------------------
-// Server Action: Get Template
-//---------------------------------------------
+export const uploadTemplate = createServerFn({ method: "POST" })
+  .validator((data: { name: string; content: string }) => data)
+  .handler(async ({ data }) => {
+    const { name, content } = data;
+    const buffer = Buffer.from(content, "base64");
+    const filePath = `app/data/${name}-template.xlsx`;
+    await fs.writeFile(filePath, buffer);
+    return { success: true } as const;
+  });
+
 export const getTemplate = createServerFn({ method: "GET" })
   .validator((data: { name: string }) => data)
   .handler(async ({ data: { name } }) => {
@@ -20,9 +26,6 @@ export const getTemplate = createServerFn({ method: "GET" })
     }
   });
 
-//---------------------------------------------
-// Route: Template Config
-//---------------------------------------------
 export const Route = createFileRoute("/investments/$name/template-config")({
   component: RouteComponent,
   loader: async ({ params }) => {
@@ -31,9 +34,6 @@ export const Route = createFileRoute("/investments/$name/template-config")({
   },
 });
 
-//---------------------------------------------
-// Route Component: Template Config
-//---------------------------------------------
 function RouteComponent() {
   const { name } = Route.useParams();
   const { hasTemplate } = Route.useLoaderData() as { hasTemplate: boolean };

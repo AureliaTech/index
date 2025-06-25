@@ -36,6 +36,7 @@ import { Route as FundsNameInvestmentsImport } from './routes/funds/$name/invest
 import { Route as FundsNameDocumentsImport } from './routes/funds/$name/documents'
 import { Route as FundsNameDashboardImport } from './routes/funds/$name/dashboard'
 import { Route as FundsNameCashFlowImport } from './routes/funds/$name/cash-flow'
+import { Route as InvestmentsNameDealTeamHighlightsNewImport } from './routes/investments/$name/deal-team-highlights/new'
 
 // Create/Update Routes
 
@@ -193,6 +194,13 @@ const FundsNameCashFlowRoute = FundsNameCashFlowImport.update({
   path: '/cash-flow',
   getParentRoute: () => FundsNameRoute,
 } as any)
+
+const InvestmentsNameDealTeamHighlightsNewRoute =
+  InvestmentsNameDealTeamHighlightsNewImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => InvestmentsNameDealTeamHighlightsRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -373,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvestmentsNameIndexImport
       parentRoute: typeof InvestmentsNameImport
     }
+    '/investments/$name/deal-team-highlights/new': {
+      id: '/investments/$name/deal-team-highlights/new'
+      path: '/new'
+      fullPath: '/investments/$name/deal-team-highlights/new'
+      preLoaderRoute: typeof InvestmentsNameDealTeamHighlightsNewImport
+      parentRoute: typeof InvestmentsNameDealTeamHighlightsImport
+    }
   }
 }
 
@@ -412,11 +427,26 @@ const FundsRouteChildren: FundsRouteChildren = {
 
 const FundsRouteWithChildren = FundsRoute._addFileChildren(FundsRouteChildren)
 
+interface InvestmentsNameDealTeamHighlightsRouteChildren {
+  InvestmentsNameDealTeamHighlightsNewRoute: typeof InvestmentsNameDealTeamHighlightsNewRoute
+}
+
+const InvestmentsNameDealTeamHighlightsRouteChildren: InvestmentsNameDealTeamHighlightsRouteChildren =
+  {
+    InvestmentsNameDealTeamHighlightsNewRoute:
+      InvestmentsNameDealTeamHighlightsNewRoute,
+  }
+
+const InvestmentsNameDealTeamHighlightsRouteWithChildren =
+  InvestmentsNameDealTeamHighlightsRoute._addFileChildren(
+    InvestmentsNameDealTeamHighlightsRouteChildren,
+  )
+
 interface InvestmentsNameRouteChildren {
   InvestmentsNameCompanyPerformanceRoute: typeof InvestmentsNameCompanyPerformanceRoute
   InvestmentsNameDashboardRoute: typeof InvestmentsNameDashboardRoute
   InvestmentsNameDataCollectionRoute: typeof InvestmentsNameDataCollectionRoute
-  InvestmentsNameDealTeamHighlightsRoute: typeof InvestmentsNameDealTeamHighlightsRoute
+  InvestmentsNameDealTeamHighlightsRoute: typeof InvestmentsNameDealTeamHighlightsRouteWithChildren
   InvestmentsNameDocumentsRoute: typeof InvestmentsNameDocumentsRoute
   InvestmentsNameInvestmentSummaryRoute: typeof InvestmentsNameInvestmentSummaryRoute
   InvestmentsNameReportsRoute: typeof InvestmentsNameReportsRoute
@@ -431,7 +461,7 @@ const InvestmentsNameRouteChildren: InvestmentsNameRouteChildren = {
   InvestmentsNameDashboardRoute: InvestmentsNameDashboardRoute,
   InvestmentsNameDataCollectionRoute: InvestmentsNameDataCollectionRoute,
   InvestmentsNameDealTeamHighlightsRoute:
-    InvestmentsNameDealTeamHighlightsRoute,
+    InvestmentsNameDealTeamHighlightsRouteWithChildren,
   InvestmentsNameDocumentsRoute: InvestmentsNameDocumentsRoute,
   InvestmentsNameInvestmentSummaryRoute: InvestmentsNameInvestmentSummaryRoute,
   InvestmentsNameReportsRoute: InvestmentsNameReportsRoute,
@@ -477,7 +507,7 @@ export interface FileRoutesByFullPath {
   '/investments/$name/company-performance': typeof InvestmentsNameCompanyPerformanceRoute
   '/investments/$name/dashboard': typeof InvestmentsNameDashboardRoute
   '/investments/$name/data-collection': typeof InvestmentsNameDataCollectionRoute
-  '/investments/$name/deal-team-highlights': typeof InvestmentsNameDealTeamHighlightsRoute
+  '/investments/$name/deal-team-highlights': typeof InvestmentsNameDealTeamHighlightsRouteWithChildren
   '/investments/$name/documents': typeof InvestmentsNameDocumentsRoute
   '/investments/$name/investment-summary': typeof InvestmentsNameInvestmentSummaryRoute
   '/investments/$name/reports': typeof InvestmentsNameReportsRoute
@@ -485,6 +515,7 @@ export interface FileRoutesByFullPath {
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
   '/funds/$name/': typeof FundsNameIndexRoute
   '/investments/$name/': typeof InvestmentsNameIndexRoute
+  '/investments/$name/deal-team-highlights/new': typeof InvestmentsNameDealTeamHighlightsNewRoute
 }
 
 export interface FileRoutesByTo {
@@ -501,7 +532,7 @@ export interface FileRoutesByTo {
   '/investments/$name/company-performance': typeof InvestmentsNameCompanyPerformanceRoute
   '/investments/$name/dashboard': typeof InvestmentsNameDashboardRoute
   '/investments/$name/data-collection': typeof InvestmentsNameDataCollectionRoute
-  '/investments/$name/deal-team-highlights': typeof InvestmentsNameDealTeamHighlightsRoute
+  '/investments/$name/deal-team-highlights': typeof InvestmentsNameDealTeamHighlightsRouteWithChildren
   '/investments/$name/documents': typeof InvestmentsNameDocumentsRoute
   '/investments/$name/investment-summary': typeof InvestmentsNameInvestmentSummaryRoute
   '/investments/$name/reports': typeof InvestmentsNameReportsRoute
@@ -509,6 +540,7 @@ export interface FileRoutesByTo {
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
   '/funds/$name': typeof FundsNameIndexRoute
   '/investments/$name': typeof InvestmentsNameIndexRoute
+  '/investments/$name/deal-team-highlights/new': typeof InvestmentsNameDealTeamHighlightsNewRoute
 }
 
 export interface FileRoutesById {
@@ -530,7 +562,7 @@ export interface FileRoutesById {
   '/investments/$name/company-performance': typeof InvestmentsNameCompanyPerformanceRoute
   '/investments/$name/dashboard': typeof InvestmentsNameDashboardRoute
   '/investments/$name/data-collection': typeof InvestmentsNameDataCollectionRoute
-  '/investments/$name/deal-team-highlights': typeof InvestmentsNameDealTeamHighlightsRoute
+  '/investments/$name/deal-team-highlights': typeof InvestmentsNameDealTeamHighlightsRouteWithChildren
   '/investments/$name/documents': typeof InvestmentsNameDocumentsRoute
   '/investments/$name/investment-summary': typeof InvestmentsNameInvestmentSummaryRoute
   '/investments/$name/reports': typeof InvestmentsNameReportsRoute
@@ -538,6 +570,7 @@ export interface FileRoutesById {
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
   '/funds/$name/': typeof FundsNameIndexRoute
   '/investments/$name/': typeof InvestmentsNameIndexRoute
+  '/investments/$name/deal-team-highlights/new': typeof InvestmentsNameDealTeamHighlightsNewRoute
 }
 
 export interface FileRouteTypes {
@@ -568,6 +601,7 @@ export interface FileRouteTypes {
     | '/investments/$name/valuation'
     | '/funds/$name/'
     | '/investments/$name/'
+    | '/investments/$name/deal-team-highlights/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -591,6 +625,7 @@ export interface FileRouteTypes {
     | '/investments/$name/valuation'
     | '/funds/$name'
     | '/investments/$name'
+    | '/investments/$name/deal-team-highlights/new'
   id:
     | '__root__'
     | '/'
@@ -618,6 +653,7 @@ export interface FileRouteTypes {
     | '/investments/$name/valuation'
     | '/funds/$name/'
     | '/investments/$name/'
+    | '/investments/$name/deal-team-highlights/new'
   fileRoutesById: FileRoutesById
 }
 
@@ -747,7 +783,10 @@ export const routeTree = rootRoute
     },
     "/investments/$name/deal-team-highlights": {
       "filePath": "investments/$name/deal-team-highlights.tsx",
-      "parent": "/investments/$name"
+      "parent": "/investments/$name",
+      "children": [
+        "/investments/$name/deal-team-highlights/new"
+      ]
     },
     "/investments/$name/documents": {
       "filePath": "investments/$name/documents.tsx",
@@ -776,6 +815,10 @@ export const routeTree = rootRoute
     "/investments/$name/": {
       "filePath": "investments/$name/index.tsx",
       "parent": "/investments/$name"
+    },
+    "/investments/$name/deal-team-highlights/new": {
+      "filePath": "investments/$name/deal-team-highlights/new.tsx",
+      "parent": "/investments/$name/deal-team-highlights"
     }
   }
 }

@@ -1,11 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, Search, ArrowUpDown, MoreVertical } from "lucide-react";
+import { Outlet, Link } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import * as fs from "node:fs/promises";
 
-export const Route = createFileRoute("/investments/$name/deal-team-highlights")(
-  {
-    component: RouteComponent,
-  }
-);
+const getComments = createServerFn({ method: "GET" }).handler(async () => {
+  const comments = await JSON.parse(
+    await fs.readFile("app/data/comments.json", "utf8")
+  );
+  const logs: LogEntry[] = comments.map((comment, idx) => ({
+    id: `log${idx}`,
+    title: comment.title,
+    description: comment.content,
+    tags: comment.labels.map((l) => ({
+      label: l.name,
+      color: l.color === "grey" ? "gray" : l.color,
+    })),
+    author: comment.author,
+    date: comment.date,
+  }));
+  
+  return logs;
+});
+
+export type CommentLabel = {
+  id: number;
+  name: string;
+  color: string;
+};
+
+export interface Comment {
+  title: string;
+  date: string; // ISO date
+  content: string;
+  author: string;
+  labels: CommentLabel[];
+}
 
 type LogTag = {
   label: string;
@@ -21,69 +51,49 @@ interface LogEntry {
   date: string; // ISO date
 }
 
-const logs: LogEntry[] = [
-  {
-    id: "log1",
-    title: "Call with new CEO",
-    description:
-      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
-    tags: [{ label: "Other", color: "gray" }],
-    author: "Monica Gomez Acebo",
-    date: "2025-01-01",
-  },
-  {
-    id: "log2",
-    title: "Integration for greater efficiency",
-    description:
-      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
-    tags: [
-      { label: "Competition", color: "blue" },
-      { label: "Global Economy", color: "purple" },
-      { label: "Other", color: "gray" },
-    ],
-    author: "Monica Gomez Acebo",
-    date: "2024-10-20",
-  },
-  {
-    id: "log3",
-    title: "Internal Meeting",
-    description:
-      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
-    tags: [{ label: "Other", color: "gray" }],
-    author: "Monica Gomez Acebo",
-    date: "2024-06-10",
-  },
-  {
-    id: "log4",
-    title: "Bank of America approach",
-    description:
-      "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
-    tags: [{ label: "Exit Strategy", color: "yellow" }],
-    author: "Monica Gomez Acebo",
-    date: "2024-03-23",
-  },
-];
+const colorClasses: Record<string, string> = {
+  blue: "bg-blue-100  text-blue-800",
+  green: "bg-green-100 text-green-800",
+  yellow: "bg-yellow-100 text-yellow-800",
+  gray: "bg-gray-200  text-gray-800",
+  red: "bg-red-100 text-red-800",
+};
 
 function TagBadge({ tag }: { tag: LogTag }) {
-  const bg = `${tag.color}-100`;
-  const text = `${tag.color}-800`;
   return (
     <span
-      className={`rounded-full px-2.5 py-0.5 text-xs font-medium bg-${bg} text-${text}`}
+      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${colorClasses[tag.color]}`}
     >
       {tag.label}
     </span>
   );
 }
 
+export const Route = createFileRoute("/investments/$name/deal-team-highlights")(
+  {
+    loader: async (): Promise<LogEntry[]> => {
+      return await getComments();
+    },
+    component: RouteComponent,
+  }
+);
+
 function RouteComponent() {
+  const logs = Route.useLoaderData();
+
+  const { name } = Route.useParams();
+
   return (
     <div className="p-6 space-y-6">
       {/* Top right button */}
       <div className="flex justify-end">
-        <button className="flex items-center gap-2 rounded-md border border-neutral-200 dark:border-neutral-700 px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900">
+        <Link
+          to="/investments/$name/deal-team-highlights/new"
+          params={{ name }}
+          className="flex items-center gap-2 rounded-md border border-neutral-200 dark:border-neutral-700 px-3 py-1 text-sm text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900 hover:cursor-pointer"
+        >
           <Plus className="w-4 h-4" /> Add Comment
-        </button>
+        </Link>
       </div>
 
       {/* Search & filters row */}
@@ -155,6 +165,9 @@ function RouteComponent() {
           </div>
         ))}
       </div>
+
+      {/* Nested overlay route */}
+      <Outlet />
     </div>
   );
 }

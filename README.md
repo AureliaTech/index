@@ -34,11 +34,15 @@ git config --local github.user=@[your.username]
 
 
 ## Run Local Dev Environment
-Once Aurelia's directory has been created and all the repos cloned, you can run all the services locally for development:
+The `./scripts` directory contains scripts needed for development, including one to start all the services with docker compose. Before you run them, you will need to guarantee execution permissions to all the files in the directory:
 ```sh
-docker-compose -f docker-compose.dev.yaml up -d
+chmod +x ./scripts/*.sh
 ```
--- Move run local environment command to a script or makefile --
+
+Once Aurelia's directory has been created, all the repos cloned and you have given permissions to execute the scripts, you can run all the services locally for development:
+```sh
+./scripts/containers:up.sh
+```
 
 ## Todo
 - Add signing commits instructions

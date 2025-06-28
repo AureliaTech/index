@@ -23,36 +23,61 @@ import {
   CircleHelp,
   CircleUser,
 } from "lucide-react";
-import { useState, createContext, useContext, useEffect, Fragment } from "react";
+import {
+  useState,
+  createContext,
+  useContext,
+  useEffect,
+  Fragment,
+} from "react";
 import * as fs from "node:fs/promises";
 import { useRouter } from "@tanstack/react-router";
 import logo from "../assets/aurelia-logo.png?url";
 import { createServerFn } from "@tanstack/react-start";
+import { getCompanies } from "../../db/gen/ts/companies_sql";
+import { getFunds } from "../../db/gen/ts/fund_sql";
+import client from "../db";
 
 const getMenuData = createServerFn({
   method: "GET",
 }).handler(async () => {
-  const investments = JSON.parse(
-    await fs.readFile("app/data/investments.json", "utf8"),
-  );
-  const funds = JSON.parse(await fs.readFile("app/data/funds.json", "utf8"));
-  const favoritesRaw = JSON.parse(
-    await fs.readFile("app/data/favorites.json", "utf8"),
-  );
 
-  console.log(favoritesRaw);
-  console.log(investments);
+  try {
+    // Ensure the database client is connected
+    await client.connect().catch(() => {});
 
-  const favorites = favoritesRaw.map(({ id, type }) => ({
-    id,
-    name:
-      type === "investment"
-        ? investments.find((investment) => investment.id === id)?.name
-        : funds.find((fund) => fund.id === id)?.name,
-  }));
-  console.log(favorites);
+    // Fetch investments (companies)
+    const companies = await getCompanies(client);
 
-  return { investments, funds, favorites };
+    const investments = companies.map((c) => ({
+      id: c.slug,
+      slug: c.slug,
+      name: c.name,
+    }));
+
+    // Fetch funds
+    const fundRows = await getFunds(client);
+    const funds = fundRows.map((f) => ({
+      id: f.slug,
+      slug: f.slug,
+      name: f.name,
+    }));
+    const favoritesRaw = JSON.parse(
+      await fs.readFile("app/data/favorites.json", "utf8")
+    );
+
+    const favorites = favoritesRaw.map(({ id, type }) => ({
+      id,
+      name:
+        type === "investment"
+          ? investments.find((investment) => investment.id === id)?.name
+          : funds.find((fund) => fund.id === id)?.name,
+    }));
+    return { investments, funds, favorites };
+  } catch (error) {
+    console.error(error);
+    return { investments: [], funds: [], favorites: [] };
+  }
 });
 
 export const Route = createRootRouteWithContext<{
@@ -117,7 +142,7 @@ function Wrapper({ children }: { children?: React.ReactNode }) {
 
       return () => clearTimeout(timeout);
     },
-    [isCollapsed],
+    [isCollapsed]
   );
 
   return (
@@ -157,13 +182,7 @@ interface ItemProps {
   exact?: boolean;
 }
 
-function Item({
-  children,
-  icon,
-  to,
-  collapsable,
-  exact = true,
-}: ItemProps) {
+function Item({ children, icon, to, collapsable, exact = true }: ItemProps) {
   const IconComponent = icon;
   const { isCollapsed, isTransitioning } = useContext(MenuContext);
 
@@ -332,15 +351,15 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             <Menu.Item icon={HandCoins} collapsable to="/funds">
               Funds
             </Menu.Item>
-            <Menu.Item to="/funds/fund-i" exact={false}>
-              <span className="pl-7">Fund I</span>
-            </Menu.Item>
-            <Menu.Item to="/funds/energy-transition" exact={false}>
-              <span className="pl-7">Energy Transition Fund I</span>
-            </Menu.Item>
-            <Menu.Item to="/funds/growth-iii" exact={false}>
-              <span className="pl-7">Growth Fund III</span>
-            </Menu.Item>
+            {funds.map((fund: any) => (
+              <Menu.Item
+                key={fund.id ?? fund.slug}
+                to={`/funds/${fund.id ?? fund.slug}`}
+                exact={false}
+              >
+                <span className="pl-7">{fund.name}</span>
+              </Menu.Item>
+            ))}
             <Menu.Item icon={Settings} collapsable to="/settings">
               Settings
             </Menu.Item>
@@ -363,80 +382,6 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               </div>
 
               <Tabs />
-              {/* <nav className="flex items-center gap-2 flex-1 justify-end">
-                <Link
-                  activeProps={{ className: "opacity-100" }}
-                  className="opacity-50 text-nowrap p-1 px-2 text-xs rounded-md bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
-                  to="/investments/$name/investment-summary"
-                  params={{ name: "atos" }}
-                >
-                  Investment Summary
-                </Link>
-                <Link
-                  activeProps={{ className: "opacity-100" }}
-                  className="opacity-50 text-nowrap p-1 px-2 text-xs rounded-md bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
-                  to="/investments/$name/dashboard"
-                  params={{ name: "atos" }}
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  activeProps={{ className: "opacity-100" }}
-                  className="opacity-50 text-nowrap p-1 px-2 text-xs rounded-md bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
-                  to="/investments/$name/company-performance"
-                  params={{ name: "atos" }}
-                >
-                  Company Performance
-                </Link>
-                <Link
-                  activeProps={{ className: "opacity-100" }}
-                  className="opacity-50 text-nowrap p-1 px-2 text-xs rounded-md bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
-                  to="/investments/$name/valuation"
-                  params={{ name: "atos" }}
-                >
-                  Valuation
-                </Link>
-                <Link
-                  activeProps={{ className: "opacity-100" }}
-                  className="opacity-50 text-nowrap p-1 px-2 text-xs rounded-md bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
-                  to="/investments/$name/shareholders-structure"
-                  params={{ name: "atos" }}
-                >
-                  Shareholders Structure
-                </Link>
-                <Link
-                  activeProps={{ className: "opacity-100" }}
-                  className="opacity-50 text-nowrap p-1 px-2 text-xs rounded-md bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
-                  to="/investments/$name/deal-team-highlights"
-                  params={{ name: "atos" }}
-                >
-                  Deal Team Highlights
-                </Link>
-                <Link
-                  activeProps={{ className: "opacity-100" }}
-                  className="opacity-50 text-nowrap p-1 px-2 text-xs rounded-md bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
-                  to="/investments/$name/reports"
-                  params={{ name: "atos" }}
-                >
-                  Reports
-                </Link>
-                <Link
-                  activeProps={{ className: "opacity-100" }}
-                  className="opacity-50 text-nowrap p-1 px-2 text-xs rounded-md bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
-                  to="/investments/$name/documents"
-                  params={{ name: "atos" }}
-                >
-                  Documents
-                </Link>
-                <Link
-                  activeProps={{ className: "opacity-100" }}
-                  className="opacity-50 text-nowrap p-1 px-2 text-xs rounded-md bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
-                  to="/investments/$name/data-collection"
-                  params={{ name: "atos" }}
-                >
-                  Data Collection
-                </Link>
-              </nav> */}
             </header>
             <div className="flex-1 flex pr-2 pb-2">
               <div className="bg-neutral-50 flex-1 flex-col dark:bg-neutral-900 flex p-2 rounded border border-neutral-200 dark:border-neutral-700">

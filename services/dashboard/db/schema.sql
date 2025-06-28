@@ -11,6 +11,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+
+--
 -- Name: check_user_favorite_foreign_key(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -80,7 +94,7 @@ begin
     unique_slug := base_slug;
 
     -- Check for existing slugs and ensure uniqueness
-    while exists (select 1 from companies where slug = unique_slug and id != new.id)
+    while exists (select 1 from company where slug = unique_slug and id != new.id)
         loop
             sequence_num := sequence_num + 1;
             unique_slug := base_slug || '-' || sequence_num;
@@ -125,6 +139,31 @@ ALTER TABLE public.company ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
+-- Name: deal_team_highlight; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.deal_team_highlight (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    description text NOT NULL,
+    title character varying(255) NOT NULL,
+    author_id uuid NOT NULL,
+    company_id integer NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: deal_team_highlight_label; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.deal_team_highlight_label (
+    highlight_id uuid NOT NULL,
+    label_id uuid NOT NULL
+);
+
+
+--
 -- Name: fund; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -148,6 +187,17 @@ ALTER TABLE public.fund ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
     NO MINVALUE
     NO MAXVALUE
     CACHE 1
+);
+
+
+--
+-- Name: label; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.label (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    color character varying(32) NOT NULL,
+    text character varying(255) NOT NULL
 );
 
 
@@ -215,6 +265,22 @@ ALTER TABLE ONLY public.company
 
 
 --
+-- Name: deal_team_highlight_label deal_team_highlight_label_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.deal_team_highlight_label
+    ADD CONSTRAINT deal_team_highlight_label_pkey PRIMARY KEY (highlight_id, label_id);
+
+
+--
+-- Name: deal_team_highlight deal_team_highlight_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.deal_team_highlight
+    ADD CONSTRAINT deal_team_highlight_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: fund fund_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -228,6 +294,22 @@ ALTER TABLE ONLY public.fund
 
 ALTER TABLE ONLY public.fund
     ADD CONSTRAINT fund_slug_key UNIQUE (slug);
+
+
+--
+-- Name: label label_color_text_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.label
+    ADD CONSTRAINT label_color_text_key UNIQUE (color, text);
+
+
+--
+-- Name: label label_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.label
+    ADD CONSTRAINT label_pkey PRIMARY KEY (id);
 
 
 --
@@ -274,6 +356,20 @@ CREATE INDEX company_slug_idx ON public.company USING btree (slug);
 --
 
 CREATE INDEX fund_slug_idx ON public.fund USING btree (slug);
+
+
+--
+-- Name: idx_deal_team_highlight_author_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_deal_team_highlight_author_id ON public.deal_team_highlight USING btree (author_id);
+
+
+--
+-- Name: idx_deal_team_highlight_company_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_deal_team_highlight_company_id ON public.deal_team_highlight USING btree (company_id);
 
 
 --
@@ -347,6 +443,38 @@ CREATE TRIGGER user_favorite_polymorphic_foreign_key BEFORE INSERT OR UPDATE ON 
 
 
 --
+-- Name: deal_team_highlight deal_team_highlight_author_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.deal_team_highlight
+    ADD CONSTRAINT deal_team_highlight_author_id_fkey FOREIGN KEY (author_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: deal_team_highlight deal_team_highlight_company_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.deal_team_highlight
+    ADD CONSTRAINT deal_team_highlight_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.company(id) ON DELETE CASCADE;
+
+
+--
+-- Name: deal_team_highlight_label deal_team_highlight_label_highlight_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.deal_team_highlight_label
+    ADD CONSTRAINT deal_team_highlight_label_highlight_id_fkey FOREIGN KEY (highlight_id) REFERENCES public.deal_team_highlight(id) ON DELETE CASCADE;
+
+
+--
+-- Name: deal_team_highlight_label deal_team_highlight_label_label_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.deal_team_highlight_label
+    ADD CONSTRAINT deal_team_highlight_label_label_id_fkey FOREIGN KEY (label_id) REFERENCES public.label(id) ON DELETE RESTRICT;
+
+
+--
 -- Name: user_favorite user_favorite_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -368,4 +496,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250626091032'),
     ('20250626122722'),
     ('20250626124026'),
-    ('20250626132815');
+    ('20250626132815'),
+    ('20250627155032'),
+    ('20250627160000');

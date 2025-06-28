@@ -65,6 +65,10 @@ create trigger delete_company_favorite
     execute function delete_company_favorite_func();
 
 -- migrate:down
-drop table user_favorite;
-drop trigger delete_fund_favorite on fund;
 drop trigger delete_company_favorite on company;
+drop function delete_company_favorite_func();
+drop trigger delete_fund_favorite on fund;
+drop function delete_fund_favorite_func();
+drop trigger user_favorite_polymorphic_foreign_key on user_favorite;
+drop function check_user_favorite_foreign_key();
+drop table user_favorite;

@@ -28,7 +28,9 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   Fragment,
+  useMemo,
 } from "react";
 import * as fs from "node:fs/promises";
 import { useRouter } from "@tanstack/react-router";
@@ -41,7 +43,6 @@ import client from "../db";
 const getMenuData = createServerFn({
   method: "GET",
 }).handler(async () => {
-
   try {
     // Ensure the database client is connected
     await client.connect().catch(() => {});
@@ -182,13 +183,7 @@ interface ItemProps {
   exact?: boolean;
 }
 
-function Item({
-  children,
-  icon,
-  to,
-  collapsable,
-  exact = true,
-}: ItemProps) {
+function Item({ children, icon, to, collapsable, exact = true }: ItemProps) {
   const IconComponent = icon;
   const { isCollapsed, isTransitioning } = useContext(MenuContext);
 
@@ -275,6 +270,22 @@ const Menu = {
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   const { investments, funds, favorites } = Route.useLoaderData();
 
+  // State and global shortcut handler for the search modal
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // Global ⌘/Ctrl + K shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <html>
       <head>
@@ -292,6 +303,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             <div className="relative w-full max-w-2xl">
               <div className="relative w-full">
                 <input
+                  onClick={() => setIsSearchOpen(true)}
                   type="search"
                   aria-label="Search or type a command"
                   placeholder="Type a command or search..."
@@ -396,6 +408,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             </div>
           </main>
         </div>
+        {isSearchOpen && <SearchModal onClose={() => setIsSearchOpen(false)} />}
         <Scripts />
       </body>
     </html>
@@ -469,6 +482,143 @@ function EllipsisMenu() {
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+// Search modal shown when the user presses ⌘/Ctrl + K or clicks the small search box
+function SearchModal({ onClose }: { onClose: () => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [data, setData] = useState<{ investments: any[]; funds: any[] }>();
+  const [query, setQuery] = useState("");
+
+  const router = useRouter();
+
+  type Suggestion = { label: string; to: string; icon: React.ElementType };
+
+  const suggestions = useMemo(() => {
+    if (!data || !query.trim()) return [] as Suggestion[];
+
+    // Split by whitespace to allow multi-word search; all words must match
+    const words = query
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    const matches = (name: string) =>
+      words.every((w) => name.toLowerCase().includes(w));
+
+    const invMatches: Suggestion[] = data.investments
+      .filter((i) => matches(i.name))
+      .map((i) => ({
+        label: `Go to ${i.name}`,
+        to: `/investments/${i.id}`,
+        icon: Building2,
+      }));
+
+    const fundMatches: Suggestion[] = data.funds
+      .filter((f) => matches(f.name))
+      .map((f) => ({
+        label: `Go to ${f.name}`,
+        to: `/funds/${f.id}`,
+        icon: HandCoins,
+      }));
+
+    return [...invMatches, ...fundMatches].slice(0, 9);
+  }, [data, query]);
+
+  // Numeric keyboard shortcuts (1-9) scoped to the modal
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key >= "1" && e.key <= "9") {
+        const idx = parseInt(e.key, 10) - 1;
+        const suggestion = suggestions[idx];
+        if (suggestion) {
+          e.preventDefault();
+          router.navigate({ to: suggestion.to, replace: false });
+          onClose();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [suggestions, router, onClose]);
+
+  // Load data using web worker once when modal mounts
+  useEffect(() => {
+    const worker = new Worker(
+      new URL("../workers/searchDataWorker.ts", import.meta.url),
+      { type: "module" }
+    );
+
+    worker.postMessage("load");
+    worker.onmessage = (event) => {
+      if (event.data?.type === "data") {
+        setData(event.data.payload);
+      }
+    };
+
+    return () => worker.terminate();
+  }, []);
+
+  // Focus input and close on Escape
+  useEffect(() => {
+    inputRef.current?.focus();
+    const esc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", esc);
+    return () => window.removeEventListener("keydown", esc);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/50"
+      onClick={onClose}
+    >
+      <div
+        className="mt-24 w-full max-w-2xl bg-white dark:bg-neutral-900 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-4 relative">
+          <input
+            ref={inputRef}
+            type="search"
+            aria-label="Search or type a command"
+            placeholder="Type a command or search..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full flex items-center gap-2 px-4 py-3 text-sm rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600"
+          />
+          {/* Suggestions */}
+          {suggestions.length > 0 && (
+            <ul className="mt-2 max-h-80 overflow-y-auto divide-y divide-neutral-200 dark:divide-neutral-700 border border-neutral-200 dark:border-neutral-700 rounded-md">
+              {suggestions.map((s, idx) => {
+                const Icon = s.icon;
+                return (
+                  <li
+                    key={s.to}
+                    className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
+                    onClick={() => {
+                      router.navigate({ to: s.to, replace: false });
+                      onClose();
+                    }}
+                  >
+                    <Icon className="h-4 w-4 text-neutral-500" />
+                    <span className="flex-1">{s.label}</span>
+                    <span className="text-xs w-4 text-neutral-400 text-right">
+                      {idx + 1}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

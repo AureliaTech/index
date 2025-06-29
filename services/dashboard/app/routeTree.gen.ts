@@ -20,6 +20,7 @@ import { Route as InvestmentsIndexImport } from './routes/investments/index'
 import { Route as FundsIndexImport } from './routes/funds/index'
 import { Route as InvestmentsNewImport } from './routes/investments/new'
 import { Route as InvestmentsNameImport } from './routes/investments/$name'
+import { Route as FundsNewImport } from './routes/funds/new'
 import { Route as FundsNameImport } from './routes/funds/$name'
 import { Route as InvestmentsNameIndexImport } from './routes/investments/$name/index'
 import { Route as FundsNameIndexImport } from './routes/funds/$name/index'
@@ -95,6 +96,12 @@ const InvestmentsNameRoute = InvestmentsNameImport.update({
   id: '/$name',
   path: '/$name',
   getParentRoute: () => InvestmentsRoute,
+} as any)
+
+const FundsNewRoute = FundsNewImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => FundsRoute,
 } as any)
 
 const FundsNameRoute = FundsNameImport.update({
@@ -269,6 +276,13 @@ declare module '@tanstack/react-router' {
       path: '/$name'
       fullPath: '/funds/$name'
       preLoaderRoute: typeof FundsNameImport
+      parentRoute: typeof FundsImport
+    }
+    '/funds/new': {
+      id: '/funds/new'
+      path: '/new'
+      fullPath: '/funds/new'
+      preLoaderRoute: typeof FundsNewImport
       parentRoute: typeof FundsImport
     }
     '/investments/$name': {
@@ -461,11 +475,13 @@ const FundsNameRouteWithChildren = FundsNameRoute._addFileChildren(
 
 interface FundsRouteChildren {
   FundsNameRoute: typeof FundsNameRouteWithChildren
+  FundsNewRoute: typeof FundsNewRoute
   FundsIndexRoute: typeof FundsIndexRoute
 }
 
 const FundsRouteChildren: FundsRouteChildren = {
   FundsNameRoute: FundsNameRouteWithChildren,
+  FundsNewRoute: FundsNewRoute,
   FundsIndexRoute: FundsIndexRoute,
 }
 
@@ -559,6 +575,7 @@ export interface FileRoutesByFullPath {
   '/investments': typeof InvestmentsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/funds/$name': typeof FundsNameRouteWithChildren
+  '/funds/new': typeof FundsNewRoute
   '/investments/$name': typeof InvestmentsNameRouteWithChildren
   '/investments/new': typeof InvestmentsNewRoute
   '/funds/': typeof FundsIndexRoute
@@ -588,6 +605,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/settings': typeof SettingsRoute
+  '/funds/new': typeof FundsNewRoute
   '/investments/new': typeof InvestmentsNewRoute
   '/funds': typeof FundsIndexRoute
   '/investments': typeof InvestmentsIndexRoute
@@ -620,6 +638,7 @@ export interface FileRoutesById {
   '/investments': typeof InvestmentsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/funds/$name': typeof FundsNameRouteWithChildren
+  '/funds/new': typeof FundsNewRoute
   '/investments/$name': typeof InvestmentsNameRouteWithChildren
   '/investments/new': typeof InvestmentsNewRoute
   '/funds/': typeof FundsIndexRoute
@@ -654,6 +673,7 @@ export interface FileRouteTypes {
     | '/investments'
     | '/settings'
     | '/funds/$name'
+    | '/funds/new'
     | '/investments/$name'
     | '/investments/new'
     | '/funds/'
@@ -682,6 +702,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ai'
     | '/settings'
+    | '/funds/new'
     | '/investments/new'
     | '/funds'
     | '/investments'
@@ -712,6 +733,7 @@ export interface FileRouteTypes {
     | '/investments'
     | '/settings'
     | '/funds/$name'
+    | '/funds/new'
     | '/investments/$name'
     | '/investments/new'
     | '/funds/'
@@ -781,6 +803,7 @@ export const routeTree = rootRoute
       "filePath": "funds.tsx",
       "children": [
         "/funds/$name",
+        "/funds/new",
         "/funds/"
       ]
     },
@@ -806,6 +829,10 @@ export const routeTree = rootRoute
         "/funds/$name/key-info",
         "/funds/$name/"
       ]
+    },
+    "/funds/new": {
+      "filePath": "funds/new.tsx",
+      "parent": "/funds"
     },
     "/investments/$name": {
       "filePath": "investments/$name.tsx",

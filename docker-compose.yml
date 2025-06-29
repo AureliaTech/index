@@ -1,0 +1,68 @@
+services:
+  dashboard:
+    container_name: dashboard
+    build:
+      context: ./services/dashboard
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    environment:
+      - DATABASE_URL=postgresql://aurelia-core_owner:pwd@host.docker.internal:5432/aurelia-core?sslmode=disable
+    networks:
+      - default-network
+    depends_on:
+      - postgresql
+      - valkey
+    profiles: ["dashboard"]
+    # Mount Docker socket to allow container to interact with Docker daemon
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /usr/bin/docker:/usr/bin/docker:ro
+    # Run as root or with proper permissions to access Docker socket
+    user: "0:0"
+    # Alternative: run with specific user that has docker group access
+    # user: "1001:999"
+  postgresql:
+    container_name: postgresql
+    image: postgres:17.5
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: pwd
+      POSTGRES_DB: aurelia-core
+      POSTGRES_USER: aurelia-core_owner
+      # Environment variables on db/init
+    networks:
+      - default-network
+    ports:
+      - 5432:5432
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aurelia-core_owner -d aurelia-core"]
+      interval: 1s
+      timeout: 5s
+      retries: 5
+      start_period: 3s
+  valkey:
+    container_name: valkey
+    image: valkey/valkey:8.1.0-alpine
+    restart: always
+    # Valkey Persistence
+    # RDB: every 60 seconds if at least 1 write
+    command: valkey-server --save 60 1 --loglevel warning
+    networks:
+      - default-network
+    ports:
+      - 6379:6379
+    volumes:
+      - valkey:/data
+
+networks:
+  default-network:
+    driver: bridge
+
+volumes:
+  postgresql:
+  valkey:

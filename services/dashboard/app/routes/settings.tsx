@@ -1,97 +1,184 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, useMatches } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/settings')({
-  component: RouteComponent,
+  component: SettingsPage,
 })
 
-function RouteComponent() {
+interface Card {
+  label: string
+  description: string
+  to: string
+}
+
+function CardLink({ label, description, to }: Card) {
   return (
-    <div>
-      <h1>Settings</h1>
-      <section>
-        <h2>Organization Settings</h2>
-        <p>Manage your organization's settings here.</p>
-        <div>
-          <h3>Identity & Access Management</h3>
-          <ul>
-            <li>
-              <Link to="/settings/users">Users & Permissions</Link>
-              {/* TODO: View by user (roles in user), View by role (users in role), grant access (invite) */}  
-            </li>
-            <li>
-              <Link to="/settings/roles">Roles</Link>
-              {/* TODO: List of roles, create role, edit role -> permissions */}
-              {/* role: name, description, id, permissions */}
-            </li>
-            <li>
-              <Link to="/settings/audit-logs">Audit Logs</Link>
-              {/* TODO: List of audit logs, filter by user, action, date */}
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h3>Investment Management</h3>
-          <ul>
-            <li>
-              <Link to="/settings/funds">Funds</Link>
-              {/* TODO: List of funds, create fund, edit fund, close fund */}
-            </li>
-            <li>
-              <Link to="/settings/portfolio-companies">Portfolio companies</Link>
-              {/* TODO: List of portfolio companies, create portfolio company, edit portfolio company, delete portfolio company */}
-            </li>
-            <li>
-              <Link to="/settings/investments">Deal Team Highlights</Link>
-              {/* TODO: List of labels, create label, edit label, delete label, allow new labels to be created */}
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h3>Billing</h3>
-          <ul>
-            <li>
-              <Link to="/settings/funds">Plan, Usage & Quota Limits</Link>
-              {/* Show active plan, show billing history, upgrade plan */}
-            </li>
-            <li>
-              <Link to="/settings/billing">Invoices</Link>
-              {/* TODO: List of invoices to download */}
-            </li>
-            <li>
-              <Link to="/settings/billing">Payment Methods</Link>
-              {/* TODO: List of payment methods, add payment method, delete payment method */}
-            </li>
-          </ul>
-        </div>
-      </section>
-      <section>
-        <h2>User Preferences</h2>
-        <p>Manage your own preferences here.</p>
-        <ul>
-          <li>
-            <Link to="/settings/profile">Profile</Link>
-            {/* TODO: Edit name, username and password */}
-          </li>
-          <li>
-            <Link to="/settings/security">Security</Link>
-            {/* TODO: Edit password, 2FA */}
-          </li>
-          <li>
-            <Link to="/settings/notifications">Favorites</Link>
-          </li>
-          <li>
-            <Link to="/settings/notifications">Notifications</Link>
-            {/* TODO: Edit notifications */}
-          </li>
-          <li>
-            <Link to="/settings/labels">Label Manager</Link>
-          </li>
-          <li>
-            <Link to="/settings/theming">Theming</Link>
-            {/* TODO: Edit theme */}
-          </li>
-        </ul>
-      </section>
+    <Link
+      to={to as any}
+      className="flex flex-col gap-2 rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800"
+    >
+      <span className="text-base font-medium leading-none">{label}</span>
+      <span className="text-sm text-neutral-600 dark:text-neutral-400">
+        {description}
+      </span>
+    </Link>
+  )
+}
+
+function SettingsPage() {
+  const identityCards: Card[] = [
+    {
+      label: 'Users & Permissions',
+      description: 'Manage roles, invites and user access control',
+      to: '/settings/users',
+    },
+    {
+      label: 'Roles',
+      description: 'Define permission sets for your team',
+      to: '/settings/roles',
+    },
+    {
+      label: 'Audit Logs',
+      description: 'View a chronological log of important account activity',
+      to: '/settings/audit-logs',
+    },
+  ]
+
+  const investmentCards: Card[] = [
+    {
+      label: 'Funds',
+      description: 'Create, close or edit investment funds',
+      to: '/settings/funds',
+    },
+    {
+      label: 'Portfolio Companies',
+      description: 'Manage portfolio company metadata',
+      to: '/settings/portfolio-companies',
+    },
+    {
+      label: 'Deal Team Highlights',
+      description: 'Configure labels & highlights available to deal teams',
+      to: '/settings/investments',
+    },
+  ]
+
+  const billingCards: Card[] = [
+    {
+      label: 'Plan, Usage & Quota Limits',
+      description: 'Monitor usage and upgrade plans',
+      to: '/settings/billing',
+    },
+    {
+      label: 'Invoices',
+      description: 'Download invoice history',
+      to: '/settings/billing',
+    },
+    {
+      label: 'Payment Methods',
+      description: 'Update and manage cards on file',
+      to: '/settings/billing',
+    },
+  ]
+
+  const preferenceCards: Card[] = [
+    {
+      label: 'Profile',
+      description: 'Edit your name and contact information',
+      to: '/settings/profile',
+    },
+    {
+      label: 'Security',
+      description: 'Change password and enable two-factor authentication',
+      to: '/settings/security',
+    },
+    {
+      label: 'Favorites',
+      description: 'Manage your personal list of favorites',
+      to: '/settings/notifications',
+    },
+    {
+      label: 'Notifications',
+      description: 'Choose when and how we notify you',
+      to: '/settings/notifications',
+    },
+    {
+      label: 'Label Manager',
+      description: 'Create custom labels for investments & funds',
+      to: '/settings/labels',
+    },
+    {
+      label: 'Theming',
+      description: 'Personalise your dashboard appearance',
+      to: '/settings/theming',
+    },
+  ]
+
+  const matches = useMatches();
+  const leaf = matches[matches.length - 1];
+  const isOverview = leaf.routeId === "/settings";
+
+  return (
+    <div className="p-4 md:p-6 lg:p-8 space-y-8">
+      <header>
+        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1 max-w-prose">
+          Configure every aspect of your organisation and personal preferences
+          in one place.
+        </p>
+      </header>
+
+      {isOverview && (
+        <>
+          <section className="space-y-4">
+            <h2 className="text-lg font-medium">Organization Settings</h2>
+            <div className="space-y-6">
+              <div>
+                <h3 className="mb-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+                  Identity &amp; Access Management
+                </h3>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {identityCards.map((card) => (
+                    <CardLink key={card.label} {...card} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="mb-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+                  Investment Management
+                </h3>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {investmentCards.map((card) => (
+                    <CardLink key={card.label} {...card} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="mb-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+                  Billing
+                </h3>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {billingCards.map((card) => (
+                    <CardLink key={card.label} {...card} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="text-lg font-medium">User Preferences</h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {preferenceCards.map((card) => (
+                <CardLink key={card.label} {...card} />
+              ))}
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* Nested settings pages will render here */}
+      <Outlet />
     </div>
   )
 }

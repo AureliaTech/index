@@ -182,7 +182,13 @@ interface ItemProps {
   exact?: boolean;
 }
 
-function Item({ children, icon, to, collapsable, exact = true }: ItemProps) {
+function Item({
+  children,
+  icon,
+  to,
+  collapsable,
+  exact = true,
+}: ItemProps) {
   const IconComponent = icon;
   const { isCollapsed, isTransitioning } = useContext(MenuContext);
 

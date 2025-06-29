@@ -7,6 +7,7 @@ import {
 } from "../../../db/gen/ts/company_sql";
 import client from "../../db";
 
+
 export const createCompany = createServerFn({ method: "POST" })
   .validator((data: { name: string; slug: string }) => data)
   .handler(async ({ data }) => {
@@ -66,7 +67,6 @@ function RouteComponent() {
       const res = await createCompany({
         data: { name: name.trim(), slug },
       });
-
 
       if (res?.error) {
         setError("A company with this id already exists.");

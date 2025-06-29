@@ -31,6 +31,7 @@ import {
   useRef,
   Fragment,
   useMemo,
+  useCallback,
 } from "react";
 import * as fs from "node:fs/promises";
 import { useRouter } from "@tanstack/react-router";
@@ -492,60 +493,179 @@ function SearchModal({ onClose }: { onClose: () => void }) {
 
   const [data, setData] = useState<{ investments: any[]; funds: any[] }>();
   const [query, setQuery] = useState("");
+  const [contexts, setContexts] = useState<
+    { id: string; label: string; type: "investment" | "fund"; icon: React.ElementType }[]
+  >([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const router = useRouter();
 
-  type Suggestion = { label: string; to: string; icon: React.ElementType };
+  type Suggestion = {
+    label: string;
+    icon: React.ElementType;
+    to?: string; // optional when it's an action with sub-options
+    children?: Suggestion[]; // optional nested suggestions (multi-step)
+  };
+
+  // Stack to track multi-step navigation
+  const [actionStack, setActionStack] = useState<Suggestion[][]>([]);
+
+  // Context mode is active if the user is typing after the last "@"
+  const atIndex = query.lastIndexOf("@");
+  const isContextMode = atIndex !== -1;
+  const contextTerm = isContextMode ? query.slice(atIndex + 1).trim().toLowerCase() : "";
+
+  const baseCommandsRef = useRef<Suggestion[]>([
+    // static options
+    { label: "Go to My Firm", to: "/", icon: Building2 },
+    { label: "Go to Favorite Investments", to: "/investments?favorites", icon: Star },
+    { label: "Go to Search Investments", to: "/investments", icon: Search },
+    { label: "Go to Funds", to: "/funds", icon: HandCoins },
+    { label: "Go to Settings", to: "/settings", icon: Settings },
+    { label: "Go to Aurelia AI", to: "/ai", icon: Bot },
+
+    // Example multi-step action
+    {
+      label: "Create…",
+      icon: CircleHelp,
+      children: [
+        { label: "New Investment", icon: Building2, to: "/investments/new" },
+        { label: "New Fund", icon: HandCoins, to: "/funds/new" },
+      ],
+    },
+  ]);
 
   const suggestions = useMemo(() => {
-    if (!data || !query.trim()) return [] as Suggestion[];
+    if (!data) return [] as Suggestion[];
 
-    // Split by whitespace to allow multi-word search; all words must match
-    const words = query
+    // If we're inside a multi-step action, show its children first (before context handling)
+    if (actionStack.length > 0) {
+      return actionStack[actionStack.length - 1];
+    }
+
+    // Context selection mode with "@"
+    if (isContextMode) {
+      if (!contextTerm) return [];
+
+      const filterFn = (name: string) => name.toLowerCase().includes(contextTerm);
+
+      const inv: Suggestion[] = data.investments
+        .filter((i) => filterFn(i.name) && !contexts.some((c) => c.id === i.id))
+        .map((i) => ({ label: i.name, to: i.id, icon: Building2 }));
+
+      const fundsS: Suggestion[] = data.funds
+        .filter((f) => filterFn(f.name) && !contexts.some((c) => c.id === f.id))
+        .map((f) => ({ label: f.name, to: f.id, icon: HandCoins }));
+
+      return [...inv, ...fundsS].slice(0, 9);
+    }
+
+    // Regular search over static + dynamic navigation commands
+    const searchString = isContextMode ? query.slice(0, atIndex) : query;
+
+    const words = searchString
       .trim()
       .toLowerCase()
       .split(/\s+/)
       .filter(Boolean);
 
-    const matches = (name: string) =>
-      words.every((w) => name.toLowerCase().includes(w));
+    // If no words, return the full (static + dynamic) command list
+    if (!words.length) return baseCommandsRef.current.slice(0, 50);
 
-    const invMatches: Suggestion[] = data.investments
-      .filter((i) => matches(i.name))
-      .map((i) => ({
+    const matches = (label: string) => words.every((w) => label.toLowerCase().includes(w));
+
+    const dynamicCommands: Suggestion[] = [
+      ...data.investments.map((i) => ({
         label: `Go to ${i.name}`,
         to: `/investments/${i.id}`,
         icon: Building2,
-      }));
-
-    const fundMatches: Suggestion[] = data.funds
-      .filter((f) => matches(f.name))
-      .map((f) => ({
+      })),
+      ...data.funds.map((f) => ({
         label: `Go to ${f.name}`,
         to: `/funds/${f.id}`,
         icon: HandCoins,
-      }));
+      })),
+    ];
 
-    return [...invMatches, ...fundMatches].slice(0, 9);
-  }, [data, query]);
+    const allCommands = [...baseCommandsRef.current, ...dynamicCommands];
 
-  // Numeric keyboard shortcuts (1-9) scoped to the modal
+    return allCommands.filter((c) => matches(c.label)).slice(0, 9);
+  }, [data, query, isContextMode, contexts, actionStack]);
+
+  // Reset selected index whenever the list of suggestions changes
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [suggestions]);
+
+  // Helper to process selection
+  const selectSuggestion = useCallback(
+    (s: Suggestion) => {
+      // Drill-down if the suggestion has sub-options
+      if (s.children) {
+        setActionStack((stk) => [...stk, s.children!]);
+        setQuery("");
+        return;
+      }
+
+      if (isContextMode) {
+        setContexts((prev) => [
+          ...prev,
+          {
+            id: s.to!,
+            label: s.label,
+            type: s.icon === Building2 ? "investment" : "fund",
+            icon: s.icon,
+          },
+        ]);
+
+        // Remove the context fragment from the query, keep any prefix
+        const prefix = query.slice(0, atIndex).trimEnd();
+        setQuery(prefix ? prefix + " " : "");
+      } else {
+        router.navigate({ to: s.to!, replace: false });
+        onClose();
+      }
+    },
+    [isContextMode, router, onClose, query, atIndex]
+  );
+
+  // Handle Backspace popping action stack when query is empty and not in context mode
+  const handleBackspaceNavigation = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && query === "" && !isContextMode && actionStack.length > 0) {
+      e.preventDefault();
+      setActionStack((stk) => stk.slice(0, -1));
+    }
+  };
+
+  // Keyboard navigation: numbers, arrows, enter
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      const len = suggestions.length;
+      if (len === 0) return;
+
+      // Numeric shortcuts
       if (e.key >= "1" && e.key <= "9") {
-        const idx = parseInt(e.key, 10) - 1;
-        const suggestion = suggestions[idx];
-        if (suggestion) {
-          e.preventDefault();
-          router.navigate({ to: suggestion.to, replace: false });
-          onClose();
-        }
+        const idx = Math.min(parseInt(e.key, 10) - 1, len - 1);
+        e.preventDefault();
+        selectSuggestion(suggestions[idx]);
+        return;
+      }
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelectedIndex((prev) => (prev + 1) % len);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelectedIndex((prev) => (prev - 1 + len) % len);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        selectSuggestion(suggestions[selectedIndex]);
       }
     };
 
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [suggestions, router, onClose]);
+  }, [suggestions, selectedIndex, selectSuggestion]);
 
   // Load data using web worker once when modal mounts
   useEffect(() => {
@@ -584,15 +704,69 @@ function SearchModal({ onClose }: { onClose: () => void }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-4 relative">
-          <input
-            ref={inputRef}
-            type="search"
-            aria-label="Search or type a command"
-            placeholder="Type a command or search..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full flex items-center gap-2 px-4 py-3 text-sm rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600"
-          />
+          {/* Top context bar */}
+          {contexts.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-1">
+              {contexts.map((ctx) => {
+                const Icon = ctx.icon;
+                return (
+                  <span
+                    key={`top-${ctx.id}`}
+                    className="flex items-center gap-1 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 text-xs rounded-full px-2 py-0.5"
+                  >
+                    <Icon className="h-3 w-3" />
+                    {ctx.label}
+                    <button
+                      className="ml-1 hover:text-red-500"
+                      onClick={() => setContexts((prev) => prev.filter((c) => c.id !== ctx.id))}
+                    >
+                      ×
+                    </button>
+                  </span>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Input row with inline pills */}
+          <div className="flex flex-wrap gap-1 items-center border border-transparent focus-within:border-blue-500 rounded-md">
+            {contexts.map((ctx) => {
+              const Icon = ctx.icon;
+              return (
+                <span
+                  key={`inline-${ctx.id}`}
+                  className="flex items-center gap-1 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 text-xs rounded-full px-2 py-0.5"
+                >
+                  <Icon className="h-3 w-3" />
+                  {ctx.label}
+                  <button
+                    className="ml-1 hover:text-red-500"
+                    onClick={() => setContexts((prev) => prev.filter((c) => c.id !== ctx.id))}
+                  >
+                    ×
+                  </button>
+                </span>
+              );
+            })}
+            <input
+              ref={inputRef}
+              type="text"
+              aria-label="Search or type a command"
+              placeholder="Type a command or search..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Backspace" && query === "" && contexts.length > 0) {
+                  // delete pill
+                  e.preventDefault();
+                  setContexts((prev) => prev.slice(0, -1));
+                  return;
+                }
+                handleBackspaceNavigation(e);
+              }}
+              className="flex-1 min-w-[120px] bg-transparent focus:outline-none px-2 py-3 text-sm text-neutral-900 dark:text-neutral-100"
+            />
+          </div>
           {/* Suggestions */}
           {suggestions.length > 0 && (
             <ul className="mt-2 max-h-80 overflow-y-auto divide-y divide-neutral-200 dark:divide-neutral-700 border border-neutral-200 dark:border-neutral-700 rounded-md">
@@ -601,15 +775,20 @@ function SearchModal({ onClose }: { onClose: () => void }) {
                 return (
                   <li
                     key={s.to}
-                    className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
+                    className={`flex items-center gap-3 px-4 py-2 text-sm cursor-pointer ${
+                      idx === selectedIndex
+                        ? "bg-neutral-100 dark:bg-neutral-700"
+                        : "hover:bg-neutral-100 dark:hover:bg-neutral-700"
+                    }`}
                     onClick={() => {
-                      router.navigate({ to: s.to, replace: false });
-                      onClose();
+                      selectSuggestion(s);
                     }}
                   >
                     <Icon className="h-4 w-4 text-neutral-500" />
-                    <span className="flex-1">{s.label}</span>
-                    <span className="text-xs w-4 text-neutral-400 text-right">
+                    <span className="flex-1">{isContextMode ? s.label : s.label}</span>
+                    <span
+                      className="inline-flex items-center justify-center h-4 w-4 text-[10px] font-medium rounded border border-neutral-400 dark:border-neutral-600 text-neutral-600 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800"
+                    >
                       {idx + 1}
                     </span>
                   </li>

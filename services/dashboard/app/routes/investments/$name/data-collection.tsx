@@ -1,8 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import React from "react";
+import * as fs from "node:fs/promises";
+
+const getDataCollectionData = createServerFn({ method: "GET" })
+  .validator((d: { name: string }) => d)
+  .handler(async ({ data: { name } }) => {
+    const filePath = `app/data/${name}/general-data.json`;
+    try {
+      const raw = await fs.readFile(filePath, "utf8");
+      const dataCollection = JSON.parse(raw)["data-collection"];
+      const rows = dataCollection.rows;
+      const headers = dataCollection.headers;
+      return { rows, headers };
+    } catch (error) {
+      return { error: "No data found" };
+    }
+  });
 
 export const Route = createFileRoute("/investments/$name/data-collection")({
   component: RouteComponent,
+  loader: async ({ params }) => {
+    return await getDataCollectionData({ data: { name: params.name } });
+  },
 });
 
 interface DataRow {
@@ -12,51 +32,6 @@ interface DataRow {
   submittedBy: string;
   submittedAt: string; // ISO date-time string
 }
-
-const dataRows: DataRow[] = [
-  {
-    id: "row-1",
-    name: "Fastned - Financial and operational information 31 March 2025",
-    file: "External_ReportingMar25.xls",
-    submittedBy: "Mariana Lopez Briales",
-    submittedAt: "2025-04-02T22:30:00",
-  },
-  {
-    id: "row-2",
-    name: "Fastned - Quarterly Valuation 31 March 2025",
-    file: "Valuation_Mar25.xls",
-    submittedBy: "Mariana Lopez Briales",
-    submittedAt: "2025-04-15T08:30:00",
-  },
-  {
-    id: "row-3",
-    name: "Fastned - Financial and operational information 28 February 2025",
-    file: "External_ReportingFeb25.xls",
-    submittedBy: "Mónica Gomez Acebo",
-    submittedAt: "2025-03-08T15:45:00",
-  },
-  {
-    id: "row-4",
-    name: "Fastned - Financial and operational information 31 January 2025",
-    file: "External_ReportingJan25.xls",
-    submittedBy: "Mónica Gomez Acebo",
-    submittedAt: "2025-02-08T15:30:00",
-  },
-  {
-    id: "row-5",
-    name: "Fastned - Quarterly Valuation 31 December 2024",
-    file: "Valuation_Dec24.xls",
-    submittedBy: "Mariana Lopez Briales",
-    submittedAt: "2025-02-02T12:30:00",
-  },
-  {
-    id: "row-6",
-    name: "Fastned - Financial and operational information 31 December 2024",
-    file: "External_ReportingDec24.xls",
-    submittedBy: "Mónica Gomez Acebo",
-    submittedAt: "2025-01-15T11:25:00",
-  },
-];
 
 function formatDate(dateString: string) {
   const date = new Date(dateString);
@@ -70,31 +45,35 @@ function formatDate(dateString: string) {
 }
 
 function RouteComponent() {
+  const { rows, headers, error } = Route.useLoaderData() as {
+    rows: DataRow[];
+    headers: { id: string; label: string }[];
+    error: string | null;
+  };
+
+  if (error) {
+    return <div>Error loading data collection data</div>;
+  }
+
   return (
     <div className="relative flex-1 p-4">
       <div className="w-full overflow-auto rounded-lg border border-neutral-200 dark:border-neutral-700">
         <table className="w-full border-collapse rounded-lg text-sm">
           <thead>
             <tr>
-              <th className="sticky left-0 top-0 z-30 w-[40%] bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-left font-semibold">
-                Name
-              </th>
-              <th className="sticky top-0 z-10 w-[20%] border-l border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-center font-semibold">
-                File name
-              </th>
-              <th className="sticky top-0 z-10 w-[20%] border-l border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-center font-semibold">
-                Submitted by
-              </th>
-              <th className="sticky top-0 z-10 w-[15%] border-l border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-center font-semibold whitespace-nowrap">
-                Last submission date
-              </th>
-              <th className="sticky top-0 z-10 w-[10%] border-l border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-center font-semibold">
-                Actions
-              </th>
+              {headers.map((header) => (
+                <th
+                  key={header.id}
+                  className="sticky left-0 top-0 z-30 w-[40%] bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-left font-semibold border-b border-neutral-200 dark:border-neutral-700"
+                >
+                  {header.label}
+                </th>
+              ))}
             </tr>
+
           </thead>
           <tbody>
-            {dataRows.map((row) => (
+            {rows.map((row) => (
               <tr key={row.id}>
                 <td className="sticky left-0 z-20 w-[40%] bg-neutral-50 dark:bg-neutral-900 py-3 px-4 border-b border-neutral-200 dark:border-neutral-700 whitespace-nowrap">
                   {row.name}

@@ -1,9 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { Plus, ChevronDown } from "lucide-react";
 import React, { useState, Fragment } from "react";
+import * as fs from "node:fs/promises";
 
 export const Route = createFileRoute("/investments/$name/reports")({
   component: RouteComponent,
+  loader: async ({ params }) => {
+    return await getReportsData({ data: { name: params.name } });
+  },
 });
 
 interface ChildReport {
@@ -104,8 +109,31 @@ const reports: ReportRow[] = [
   },
 ];
 
+const getReportsData = createServerFn({ method: "GET" })
+  .validator((d: { name: string }) => d)
+  .handler(async ({ data: { name } }) => {
+    const filePath = `app/data/${name}/general-data.json`;
+    try {
+      const raw = await fs.readFile(filePath, "utf8");
+      const rows = JSON.parse(raw)["reports"]["rows"];
+      const headers = JSON.parse(raw)["reports"]["headers"];
+      return { rows, headers };
+    } catch (error) {
+      return { error: "No data found" };
+    }
+  });
+
 function RouteComponent() {
   const [openId, setOpenId] = useState<string | null>(null);
+  const { rows, headers, error } = Route.useLoaderData() as {
+    rows: ReportRow[];
+    headers: { id: string; label: string }[];
+    error: string | null;
+  };
+
+  if (error) {
+    return <div>Error loading reports data</div>;
+  }
 
   const toggle = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id));
@@ -125,22 +153,15 @@ function RouteComponent() {
         <table className="w-full border-collapse rounded-lg text-sm">
           <thead>
             <tr>
-              <th className="sticky left-0 top-0 z-30 w-56 bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-left font-semibold">
-                Name
-              </th>
-              <th className="sticky top-0 z-10 w-48 border-l border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-center font-semibold">
-                Owner
-              </th>
-              <th className="sticky top-0 z-10 w-40 border-l border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-center font-semibold whitespace-nowrap">
-                Last modified
-              </th>
-              <th className="sticky top-0 z-10 w-32 border-l border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-center font-semibold">
-                Actions
-              </th>
+              {headers.map((header) => (
+                <th key={header.id} className="sticky left-0 top-0 z-30 w-56 bg-neutral-100 dark:bg-neutral-800 py-3 px-4 text-left font-semibold">
+                  {header.label}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {reports.map((report) => (
+            {rows.map((report) => (
               <Fragment key={report.id}>
                 <tr>
                   <td

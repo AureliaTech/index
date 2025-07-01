@@ -1,9 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { Plus, ChevronDown } from "lucide-react";
+import { createServerFn } from "@tanstack/react-start";
+import * as fs from "node:fs/promises";
+
+const getDocumentsData = createServerFn({ method: "GET" })
+  .validator((d: { name: string }) => d)
+  .handler(async ({ data: { name } }) => {
+    const filePath = `app/data/${name}/general-data.json`;
+    try {
+      const raw = await fs.readFile(filePath, "utf8");
+      const documents = JSON.parse(raw)["documents"];
+      
+      const rows = documents.rows;
+      const headers = documents.headers;
+      return { rows, headers };
+    } catch (error) {
+      return { error: "No data found" };
+    }
+  });
 
 export const Route = createFileRoute("/investments/$name/documents")({
   component: RouteComponent,
+  loader: async ({ params }) => {
+    return await getDocumentsData({ data: { name: params.name } });
+  },
 });
 
 interface DocRow {
@@ -13,40 +34,15 @@ interface DocRow {
   modified: string; // ISO date
 }
 
-const docs: DocRow[] = [
-  {
-    id: "board-meeting",
-    name: "Board Meeting Documentation",
-    owner: "Financial Inc",
-    modified: "2025-04-04",
-  },
-  {
-    id: "transaction-dd",
-    name: "Transaction Due Diligence Reports",
-    owner: "Financial Inc",
-    modified: "2024-11-15",
-  },
-  {
-    id: "debt-docs",
-    name: "Debt Documents",
-    owner: "Financial Inc",
-    modified: "2024-05-20",
-  },
-  {
-    id: "legal-docs",
-    name: "Legal Documents",
-    owner: "Financial Inc",
-    modified: "2024-04-22",
-  },
-  {
-    id: "broker-reports",
-    name: "Broker Reports",
-    owner: "Financial Inc",
-    modified: "2024-03-11",
-  },
-];
-
 function RouteComponent() {
+  const { rows, headers, error } = Route.useLoaderData() as {
+    rows: DocRow[];
+    headers: { id: string; label: string }[];
+    error: string | null;
+  };
+  if (error) {
+    return <div>Error loading documents data</div>;
+  }
   return (
     <div className="relative flex-1 p-4">
       {/* Top right action */}
@@ -76,7 +72,7 @@ function RouteComponent() {
             </tr>
           </thead>
           <tbody>
-            {docs.map((doc) => (
+            {rows.map((doc: DocRow) => (
               <tr key={doc.id}>
                 <td className="sticky left-0 z-20 w-72 bg-neutral-50 dark:bg-neutral-900 py-3 px-4 border-b border-neutral-200 dark:border-neutral-700">
                   <div className="flex items-center gap-2">

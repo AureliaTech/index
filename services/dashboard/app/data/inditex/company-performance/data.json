@@ -1,0 +1,164 @@
+{
+  "headers": [
+    "Mar-24",
+    "Apr-24",
+    "May-24",
+    "Jun-24",
+    "Jul-24",
+    "Aug-24",
+    "Sep-24",
+    "Oct-24",
+    "Nov-24",
+    "Dec-24"
+  ],
+  "rows": [
+    {
+      "id": "pl-header",
+      "name": "Profit & Loss",
+      "units": "",
+      "values": {
+        "Mar-24": "",
+        "Apr-24": "",
+        "May-24": "",
+        "Jun-24": "",
+        "Jul-24": "",
+        "Aug-24": "",
+        "Sep-24": "",
+        "Oct-24": "",
+        "Nov-24": "",
+        "Dec-24": ""
+      }
+    },
+    {
+      "id": "revenue",
+      "name": "Revenues related to charging",
+      "units": "EUR thousand",
+      "values": {
+        "Mar-24": 5890,
+        "Apr-24": 7121,
+        "May-24": 5204,
+        "Jun-24": 6575,
+        "Jul-24": 5568,
+        "Aug-24": 9541,
+        "Sep-24": 6791,
+        "Oct-24": 9689,
+        "Nov-24": 8674,
+        "Dec-24": 8610
+      }
+    },
+    {
+      "id": "cost-electricity",
+      "name": "Cost of electricity",
+      "units": "EUR thousand",
+      "values": {
+        "Mar-24": "(1,232)",
+        "Apr-24": "(1,490)",
+        "May-24": "(1,089)",
+        "Jun-24": "(1,376)",
+        "Jul-24": "(1,165)",
+        "Aug-24": "(1,996)",
+        "Sep-24": "(1,421)",
+        "Oct-24": "(2,027)",
+        "Nov-24": "(1,815)",
+        "Dec-24": "(1,800)"
+      }
+    },
+    {
+      "id": "gross-profit",
+      "name": "Gross Profit",
+      "units": "EUR thousand",
+      "values": {
+        "Mar-24": 4657,
+        "Apr-24": 5631,
+        "May-24": 4115,
+        "Jun-24": 5119,
+        "Jul-24": 4403,
+        "Aug-24": 7545,
+        "Sep-24": 5370,
+        "Oct-24": 7661,
+        "Nov-24": 6859,
+        "Dec-24": 6810
+      }
+    },
+    {
+      "id": "gross-margin",
+      "name": "Gross Profit margin",
+      "units": "%",
+      "values": {
+        "Mar-24": 79,
+        "Apr-24": 79,
+        "May-24": 79,
+        "Jun-24": 79,
+        "Jul-24": 79,
+        "Aug-24": 79,
+        "Sep-24": 79,
+        "Oct-24": 79,
+        "Nov-24": 79,
+        "Dec-24": 79
+      }
+    },
+    {
+      "id": "distribution-exp",
+      "name": "Distribution expenses",
+      "units": "EUR thousand",
+      "values": {
+        "Mar-24": "(1,090)",
+        "Apr-24": "(1,090)",
+        "May-24": "(1,090)",
+        "Jun-24": "(1,090)",
+        "Jul-24": "(1,090)",
+        "Aug-24": "(1,090)",
+        "Sep-24": "(1,090)",
+        "Oct-24": "(1,090)",
+        "Nov-24": "(1,090)",
+        "Dec-24": "(1,090)"
+      }
+    },
+    {
+      "id": "marketing-exp",
+      "name": "Marketing & advertisement expenses",
+      "units": "EUR thousand",
+      "values": {
+        "Mar-24": 193,
+        "Apr-24": "(233)",
+        "May-24": "(170)",
+        "Jun-24": "(215)",
+        "Jul-24": "(182)",
+        "Aug-24": "(312)",
+        "Sep-24": "(222)",
+        "Oct-24": "(317)",
+        "Nov-24": "(284)",
+        "Dec-24": "(280)"
+      }
+    },
+    {
+      "id": "personnel-exp",
+      "name": "Personnel expenses",
+      "units": "EUR thousand",
+      "values": {
+        "Mar-24": "(1,390)",
+        "Apr-24": "(1,390)",
+        "May-24": "(1,390)",
+        "Jun-24": "(1,390)",
+        "Jul-24": "(1,390)",
+        "Aug-24": "(1,390)",
+        "Sep-24": "(1,390)",
+        "Oct-24": "(1,390)",
+        "Nov-24": "(1,390)",
+        "Dec-24": "(1,390)"
+      }
+    }
+  ],
+  "validatedDates": [
+    "2025-04-04",
+    "2025-04-04",
+    "2025-04-04",
+    "2025-04-04",
+    "2025-04-04",
+    "2025-04-04",
+    "2025-04-04",
+    "2025-04-04",
+    "2025-04-04",
+    "2025-04-04"
+  ]
+}

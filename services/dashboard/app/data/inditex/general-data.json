@@ -1,0 +1,47 @@
+{
+  "investment-summary": {
+    "foundedYear": 1985,
+    "companyName": "Inditex Fashion Retail S.A",
+    "country": "Spain",
+    "industry": "Fashion Retail",
+    "address": "Avd. de la diputación, 15143, Arteixo, (A Coruña) Spain",
+    "ownershipPercentage": "34.99%",
+    "coInvestors": "N.A",
+    "executives": {
+      "CEO": "Oscar Garcia Maceiras",
+      "CFO": "Ignacio Fernandez"
+    },
+    "boardMembers": [
+      "Marta Ortega Perez (Chairman)",
+      "Amancio Ortega Ganoa (Board)",
+      "Oscar Garcia Maceiras (CEO)",
+      "Flora Perez Marcota (Board)",
+      "Rodrigo Echnique Gordillo (Board)"
+    ],
+    "dealTeam": [
+      "Mariana Lopez Briales",
+      "Monica Gomez Acebo"
+    ],
+    "acquisitionDate": "2023-01-01",
+    "realizationDate": null,
+    "entryValuation": {
+      "equityValue": "€293.3 M",
+      "netDebt": null,
+      "enterpriseValue": "€293.3 M"
+    },
+    "latestValuation": {
+      "equityValue": "€625.1 M",
+      "netDebt": null,
+      "enterpriseValue": "€625.1 M"
+    },
+    "committedCapital": "€100 M",
+    "investedCapital": "€75 M",
+    "realizedInvestment": "€75 M",
+    "unrealizedInvestment": "€75 M",
+    "grossIRR": "25.3%",
+    "grossInvestmentMultiple": "3.4x",
+    "netIRR": "18.7%",
+    "netInvestmentMultiple": "2.7x",
+    "companyDescription": "Inditex (Industria de Diseño Textil, S.A.) is a Spanish multinational fashion retailer and one of the world's largest apparel companies. Headquartered in Arteixo, Galicia, Spain, Inditex operates a portfolio of globally recognized brands, including Zara, Massimo Dutti, Pull&Bear, Bershka, Stradivarius and Oysho."
+  }
+}

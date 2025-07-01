@@ -142,21 +142,32 @@ function RouteComponent() {
                     Validated
                   </th>
                   <th className="sticky left-56 z-10 min-w-40 border-b border-r border-neutral-700 dark:border-neutral-200 bg-neutral-50 dark:bg-neutral-900 py-3 px-4" />
-                  {validatedDates.map((d, i) => (
-                    <th
-                      key={i}
-                      className="min-w-32 border-b border-neutral-700 dark:border-neutral-200 bg-neutral-50 dark:bg-neutral-900 py-3 px-4 text-right font-semibold"
-                    >
-                      <span className="inline-flex items-center gap-1 rounded bg-green-500/25 px-3 py-1 text-xs font-medium text-green-800 dark:bg-green-800/50 dark:text-green-300">
-                        <Check className="h-3 w-3" />
-                        {Intl.DateTimeFormat("en-US", {
-                          month: "short",
-                          day: "2-digit",
-                          year: "2-digit",
-                        }).format(new Date(d))}
-                      </span>
-                    </th>
-                  ))}
+                  {validatedDates.map((d, i) => {
+                    const dateObj = new Date(d);
+                    const isValid = d && !isNaN(dateObj.getTime());
+
+                    return (
+                      <th
+                        key={i}
+                        className="min-w-32 border-b border-neutral-700 dark:border-neutral-200 bg-neutral-50 dark:bg-neutral-900 py-3 px-4 text-right font-semibold"
+                      >
+                        {isValid ? (
+                          <span className="inline-flex items-center gap-1 rounded bg-green-500/25 px-3 py-1 text-xs font-medium text-green-800 dark:bg-green-800/50 dark:text-green-300">
+                            <Check className="h-3 w-3" />
+                            {Intl.DateTimeFormat("en-US", {
+                              month: "short",
+                              day: "2-digit",
+                              year: "2-digit",
+                            }).format(dateObj)}
+                          </span>
+                        ) : (
+                          <button className="rounded border px-3 py-1 text-xs">
+                            Validate
+                          </button>
+                        )}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               {/* BODY */}

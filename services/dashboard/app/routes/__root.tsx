@@ -70,6 +70,7 @@ const getMenuData = createServerFn({
 
     const favorites = favoritesRaw.map(({ id, type }) => ({
       id,
+      type,
       name:
         type === "investment"
           ? investments.find((investment) => investment.id === id)?.name
@@ -407,8 +408,11 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               Favorite Investments
             </Menu.Item>
             {favoriteList.map((favorite) => (
-              <Menu.Item key={favorite.id} to={`/investments/${favorite.id}`}>
-                {/* {JSON.stringify(favorite)} */}
+              <Menu.Item
+                key={favorite.id}
+                to={`/${favorite.type === "fund" ? "funds" : "investments"}/${favorite.id}`}
+                exact={false}
+              >
                 <span className="pl-7">{favorite.name}</span>
               </Menu.Item>
             ))}

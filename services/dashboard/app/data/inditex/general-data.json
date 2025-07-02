@@ -169,11 +169,26 @@
   ],
   "shareholders-structure": {
     "headers": [
-      { "id": "shareholder", "label": "Shareholder" },
-      { "id": "indirectOwner", "label": "Indirect Owner" },
-      { "id": "year", "label": "Year of Acquisition" },
-      { "id": "ownership", "label": "% Ownership" },
-      { "id": "actions", "label": "Actions" }
+      {
+        "id": "shareholder",
+        "label": "Shareholder"
+      },
+      {
+        "id": "indirectOwner",
+        "label": "Indirect Owner"
+      },
+      {
+        "id": "year",
+        "label": "Year of Acquisition"
+      },
+      {
+        "id": "ownership",
+        "label": "% Ownership"
+      },
+      {
+        "id": "actions",
+        "label": "Actions"
+      }
     ],
     "rows": [
       {
@@ -205,7 +220,13 @@
       "date": "2025-01-08T09:30:00Z",
       "content": "CEO Óscar García Maceiras confirmed 12 % YoY online growth and discussed further automation of Arteixo logistics hub.",
       "author": "Mónica Gómez Acebo",
-      "labels": [{ "id": 3, "name": "Performance", "color": "grey" }]
+      "labels": [
+        {
+          "id": 3,
+          "name": "Performance",
+          "color": "grey"
+        }
+      ]
     },
     {
       "title": "RFID roll-out milestone",
@@ -213,8 +234,16 @@
       "content": "All Zara stores in LATAM completed RFID installation, reducing inventory discrepancies by 18 %.",
       "author": "Carlos Álvarez",
       "labels": [
-        { "id": 2, "name": "Strategy", "color": "blue" },
-        { "id": 3, "name": "Other", "color": "grey" }
+        {
+          "id": 2,
+          "name": "Strategy",
+          "color": "blue"
+        },
+        {
+          "id": 3,
+          "name": "Other",
+          "color": "grey"
+        }
       ]
     },
     {
@@ -222,22 +251,46 @@
       "date": "2024-09-18T10:00:00Z",
       "content": "Team met with Recover Textile to explore fiber-to-fiber recycling partnership.",
       "author": "Mónica Gómez Acebo",
-      "labels": [{ "id": 3, "name": "Other", "color": "grey" }]
+      "labels": [
+        {
+          "id": 3,
+          "name": "Other",
+          "color": "grey"
+        }
+      ]
     },
     {
       "title": "RCF refinancing mandate",
       "date": "2024-07-22T13:30:00Z",
       "content": "Mandated BBVA & Santander to arrange €900 M sustainability-linked revolving credit facility.",
       "author": "Carlos Álvarez",
-      "labels": [{ "id": 4, "name": "Exit Strategy", "color": "yellow" }]
+      "labels": [
+        {
+          "id": 4,
+          "name": "Exit Strategy",
+          "color": "yellow"
+        }
+      ]
     }
   ],
   "reports": {
     "headers": [
-      { "id": "name", "label": "Name" },
-      { "id": "owner", "label": "Owner" },
-      { "id": "modified", "label": "Last modified" },
-      { "id": "actions", "label": "Actions" }
+      {
+        "id": "name",
+        "label": "Name"
+      },
+      {
+        "id": "owner",
+        "label": "Owner"
+      },
+      {
+        "id": "modified",
+        "label": "Last modified"
+      },
+      {
+        "id": "actions",
+        "label": "Actions"
+      }
     ],
     "rows": [
       {
@@ -296,10 +349,22 @@
   },
   "documents": {
     "headers": [
-      { "id": "name", "label": "Name" },
-      { "id": "owner", "label": "Owner" },
-      { "id": "modified", "label": "Last modified" },
-      { "id": "actions", "label": "Actions" }
+      {
+        "id": "name",
+        "label": "Name"
+      },
+      {
+        "id": "owner",
+        "label": "Owner"
+      },
+      {
+        "id": "modified",
+        "label": "Last modified"
+      },
+      {
+        "id": "actions",
+        "label": "Actions"
+      }
     ],
     "rows": [
       {
@@ -336,11 +401,26 @@
   },
   "data-collection": {
     "headers": [
-      { "id": "name", "label": "Name" },
-      { "id": "file", "label": "File name" },
-      { "id": "submittedBy", "label": "Submitted by" },
-      { "id": "submittedAt", "label": "Last submission date" },
-      { "id": "actions", "label": "Actions" }
+      {
+        "id": "name",
+        "label": "Name"
+      },
+      {
+        "id": "file",
+        "label": "File name"
+      },
+      {
+        "id": "submittedBy",
+        "label": "Submitted by"
+      },
+      {
+        "id": "submittedAt",
+        "label": "Last submission date"
+      },
+      {
+        "id": "actions",
+        "label": "Actions"
+      }
     ],
     "rows": [
       {

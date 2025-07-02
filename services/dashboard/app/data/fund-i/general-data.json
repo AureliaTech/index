@@ -1,0 +1,192 @@
+{
+  "dashboard": {
+    "id": "fund-i",
+    "name": "Fund I",
+    "metrics": {
+      "investmentYear": 2017,
+      "capitalCommitedMillions": 425.5,
+      "capitalInvestedMillions": 425.5,
+      "realizedValueMillions": 258.0,
+      "unrealizedValueMillions": 729.3,
+      "totalValueMillions": 987.3,
+      "currentInvestments": 5,
+      "realizedInvestments": 2,
+      "netIrr": "18.2%",
+      "netMoic": "3.1x",
+      "grossIrr": "22.5%",
+      "grossMoic": "3.5x",
+      "unit": "€"
+    },
+    "charts": {
+      "investedCapitalByYear": {
+        "labels": ["2017", "2018", "2019", "2020", "2021", "2022", "2023"],
+        "data": [42.6, 34.1, 163.9, 0, 21.3, 100.0, 140.5]
+      },
+      "investedCapitalByRegion": {
+        "labels": [
+          "North America",
+          "Europe",
+          "Asia",
+          "South America",
+          "Africa"
+        ],
+        "data": [48, 24, 15, 8, 5]
+      },
+      "investedCapitalBySector": {
+        "labels": [
+          "Industrials",
+          "Retail",
+          "Healthcare",
+          "Services",
+          "Technology",
+          "Consumer goods"
+        ],
+        "data": [48, 16, 13, 10, 8, 5]
+      },
+      "investedCapitalByType": {
+        "labels": ["Non-regulated", "Regulated"],
+        "data": [86, 14]
+      }
+    }
+  },
+  "investments": {
+    "rows": [
+      {
+        "id": "inditex",
+        "name": "Inditex",
+        "investmentYear": 2022,
+        "exitYear": null,
+        "status": "Invested",
+        "country": "Spain",
+        "sector": "Retail",
+        "ownershipPct": 34.99,
+        "capitalCommitedM": 100.0,
+        "capitalInvestedM": 100.0
+      },
+      {
+        "id": "saks",
+        "name": "Saks",
+        "investmentYear": 2019,
+        "exitYear": null,
+        "status": "Invested",
+        "country": "United States",
+        "sector": "Retail",
+        "ownershipPct": 100,
+        "capitalCommitedM": 104.3,
+        "capitalInvestedM": 104.3
+      },
+      {
+        "id": "mayo-clinic",
+        "name": "Mayo Clinic",
+        "investmentYear": 2019,
+        "exitYear": null,
+        "status": "Invested",
+        "country": "United States",
+        "sector": "Healthcare",
+        "ownershipPct": 45,
+        "capitalCommitedM": 59.6,
+        "capitalInvestedM": 59.6
+      },
+      {
+        "id": "carrefour",
+        "name": "Carrefour",
+        "investmentYear": 2021,
+        "exitYear": null,
+        "status": "Invested",
+        "country": "France",
+        "sector": "Consumer goods",
+        "ownershipPct": 100,
+        "capitalCommitedM": 21.3,
+        "capitalInvestedM": 21.3
+      },
+      {
+        "id": "daimler",
+        "name": "Daimler",
+        "investmentYear": 2023,
+        "exitYear": null,
+        "status": "Invested",
+        "country": "Germany",
+        "sector": "Industrial",
+        "ownershipPct": 75,
+        "capitalCommitedM": 140.5,
+        "capitalInvestedM": 140.5
+      },
+      {
+        "id": "altos-consulting",
+        "name": "Altos Consulting",
+        "investmentYear": 2017,
+        "exitYear": 2023,
+        "status": "Realized",
+        "country": "United Kingdom",
+        "sector": "Services",
+        "ownershipPct": 100,
+        "capitalCommitedM": 42.6,
+        "capitalInvestedM": 42.6
+      },
+      {
+        "id": "micron-technology",
+        "name": "Micron Technology",
+        "investmentYear": 2018,
+        "exitYear": 2024,
+        "status": "Realized",
+        "country": "Singapore",
+        "sector": "Technology",
+        "ownershipPct": 100,
+        "capitalCommitedM": 34.1,
+        "capitalInvestedM": 34.1
+      }
+    ]
+  },
+  "documents": {
+    "headers": [
+      {
+        "id": "name",
+        "label": "Name"
+      },
+      {
+        "id": "owner",
+        "label": "Owner"
+      },
+      {
+        "id": "modified",
+        "label": "Last modified"
+      },
+      {
+        "id": "actions",
+        "label": "Actions"
+      }
+    ],
+    "rows": [
+      {
+        "id": "board-meeting",
+        "name": "Board Meeting Packs",
+        "owner": "Inditex Legal",
+        "modified": "2025-04-03"
+      },
+      {
+        "id": "transaction-dd",
+        "name": "Supply-Chain DD Reports",
+        "owner": "Inditex Legal",
+        "modified": "2024-11-14"
+      },
+      {
+        "id": "debt-docs",
+        "name": "Debt Facilities",
+        "owner": "Inditex Treasury",
+        "modified": "2024-05-19"
+      },
+      {
+        "id": "legal-docs",
+        "name": "Corporate Governance Docs",
+        "owner": "Inditex Legal",
+        "modified": "2024-04-21"
+      },
+      {
+        "id": "broker-reports",
+        "name": "Broker Research",
+        "owner": "Inditex IR",
+        "modified": "2024-03-10"
+      }
+    ]
+  }
+}

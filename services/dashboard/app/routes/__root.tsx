@@ -82,9 +82,34 @@ const getMenuData = createServerFn({
   }
 });
 
+// Server function to add/remove favorites
+const toggleFavorite = createServerFn({ method: "POST" })
+  .validator((d: { id: string; type: "investment" | "fund" }) => d)
+  .handler(async ({ data }) => {
+    try {
+      const filePath = "app/data/favorites.json";
+      const raw = await fs.readFile(filePath, "utf8").catch(() => "[]");
+      const favoritesArr: { id: string; type: "investment" | "fund" }[] = JSON.parse(raw);
+
+      const index = favoritesArr.findIndex((f) => f.id === data.id);
+      if (index > -1) {
+        favoritesArr.splice(index, 1); // remove existing
+      } else {
+        favoritesArr.push({ id: data.id, type: data.type });
+      }
+
+      await fs.writeFile(filePath, JSON.stringify(favoritesArr, null, 2), "utf8");
+      return favoritesArr;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  });
+
 export const Route = createRootRouteWithContext<{
   breadcrumb?: string;
   tabs?: (LinkOptions & { label: string })[];
+  favoriteKey?: string;
 }>()({
   head: () => ({
     meta: [
@@ -271,6 +296,7 @@ const Menu = {
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   const { investments, funds, favorites } = Route.useLoaderData();
 
+  const [favoriteList, setFavoriteList] = useState(favorites);
   // State and global shortcut handler for the search modal
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -286,6 +312,37 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  const matches = useMatches();
+
+  // Determine if the current (leaf-most) match or any of its parents requested the favorite star
+  const favMatch = matches.find((m) => (m.context as any).favoriteKey);
+  const favoriteKey: string | undefined = favMatch?.context.favoriteKey as string | undefined;
+
+  // Resolve if the current entity is marked as favorite in the global list loaded from JSON
+  const isFavorite = favoriteKey
+    ? favoriteList.some((f: any) => f.id === favoriteKey)
+    : false;
+
+  const handleToggleFavorite = async () => {
+    if (!favoriteKey) return;
+
+    // Determine entity type based on current path
+    const isFundPath = matches.some((m) => m.pathname.startsWith("/funds"));
+    const favoriteEntityType: "investment" | "fund" = isFundPath ? "fund" : "investment";
+
+    const updated = await toggleFavorite({ data: { id: favoriteKey, type: favoriteEntityType } } as any);
+    if (updated) {
+      const enriched = (updated as any[]).map((f) => ({
+        ...f,
+        name:
+          f.type === "investment"
+            ? investments.find((i: any) => i.id === f.id)?.name
+            : funds.find((fn: any) => fn.id === f.id)?.name,
+      }));
+      setFavoriteList(enriched);
+    }
+  };
 
   return (
     <html>
@@ -349,7 +406,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             <Menu.Item icon={Star} to="/investments?favorites">
               Favorite Investments
             </Menu.Item>
-            {favorites.map((favorite) => (
+            {favoriteList.map((favorite) => (
               <Menu.Item key={favorite.id} to={`/investments/${favorite.id}`}>
                 {/* {JSON.stringify(favorite)} */}
                 <span className="pl-7">{favorite.name}</span>
@@ -394,9 +451,20 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
                 <div className="flex items-center gap-3">
                   <Breadcrumbs />
                   <EllipsisMenu />
-                  <button className="p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer">
-                    <Star className="h-4 w-4" />
-                  </button>
+                  {favoriteKey && (
+                    <button
+                      className="p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
+                      title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                      onClick={handleToggleFavorite}
+                    >
+                      <Star
+                        className="h-4 w-4"
+                        // When the item is favorite fill the icon for a solid appearance
+                        fill={isFavorite ? "currentColor" : "none"}
+                        stroke="currentColor"
+                      />
+                    </button>
+                  )}
                 </div>
               </div>
 

@@ -1,5 +1,5 @@
 // app/routes/__root.tsx
-import type { ReactNode } from "react";
+import type { ReactNode, FC } from "react";
 import {
   Outlet,
   HeadContent,
@@ -90,7 +90,8 @@ const toggleFavorite = createServerFn({ method: "POST" })
     try {
       const filePath = "app/data/favorites.json";
       const raw = await fs.readFile(filePath, "utf8").catch(() => "[]");
-      const favoritesArr: { id: string; type: "investment" | "fund" }[] = JSON.parse(raw);
+      const favoritesArr: { id: string; type: "investment" | "fund" }[] =
+        JSON.parse(raw);
 
       const index = favoritesArr.findIndex((f) => f.id === data.id);
       if (index > -1) {
@@ -99,7 +100,11 @@ const toggleFavorite = createServerFn({ method: "POST" })
         favoritesArr.push({ id: data.id, type: data.type });
       }
 
-      await fs.writeFile(filePath, JSON.stringify(favoritesArr, null, 2), "utf8");
+      await fs.writeFile(
+        filePath,
+        JSON.stringify(favoritesArr, null, 2),
+        "utf8"
+      );
       return favoritesArr;
     } catch (error) {
       console.error(error);
@@ -297,6 +302,21 @@ const Menu = {
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   const { investments, funds, favorites } = Route.useLoaderData();
 
+  // Detect mobile devices and redirect to the dedicated mobile page
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+    if (isMobile && !window.location.pathname.startsWith("/mobile")) {
+      router.navigate({ to: "/mobile", replace: true } as any);
+    }
+  }, [router]);
+
   const [favoriteList, setFavoriteList] = useState(favorites);
   // State and global shortcut handler for the search modal
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -316,9 +336,15 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 
   const matches = useMatches();
 
+  // Determine if we are on the mobile page; if so, we will hide the sidebar but keep navbar
+  const isMobilePage = matches.some((m) => m.pathname.startsWith("/mobile"));
+  const showSidebar = !isMobilePage;
+
   // Determine if the current (leaf-most) match or any of its parents requested the favorite star
   const favMatch = matches.find((m) => (m.context as any).favoriteKey);
-  const favoriteKey: string | undefined = favMatch?.context.favoriteKey as string | undefined;
+  const favoriteKey: string | undefined = favMatch?.context.favoriteKey as
+    | string
+    | undefined;
 
   // Resolve if the current entity is marked as favorite in the global list loaded from JSON
   const isFavorite = favoriteKey
@@ -330,9 +356,13 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 
     // Determine entity type based on current path
     const isFundPath = matches.some((m) => m.pathname.startsWith("/funds"));
-    const favoriteEntityType: "investment" | "fund" = isFundPath ? "fund" : "investment";
+    const favoriteEntityType: "investment" | "fund" = isFundPath
+      ? "fund"
+      : "investment";
 
-    const updated = await toggleFavorite({ data: { id: favoriteKey, type: favoriteEntityType } } as any);
+    const updated = await toggleFavorite({
+      data: { id: favoriteKey, type: favoriteEntityType },
+    } as any);
     if (updated) {
       const enriched = (updated as any[]).map((f) => ({
         ...f,
@@ -344,6 +374,21 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       setFavoriteList(enriched);
     }
   };
+
+  if (isMobilePage) {
+    return (
+      <html>
+        <head>
+          <HeadContent />
+        </head>
+        <body className="bg-neutral-100 dark:bg-neutral-900 min-h-screen">
+          <MobileHeader />
+          {children}
+          <Scripts />
+        </body>
+      </html>
+    );
+  }
 
   return (
     <html>
@@ -400,55 +445,57 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           </div>
         </header>
         <div className="flex flex-grow bg-neutral-50 dark:bg-neutral-900">
-          <Menu.Wrapper>
-            <Menu.Item icon={Building2} collapsable to="/">
-              My Firm
-            </Menu.Item>
-            <Menu.Item icon={Star} to="/investments?favorites">
-              Favorite Investments
-            </Menu.Item>
-            {favoriteList.map((favorite) => (
-              <Menu.Item
-                key={favorite.id}
-                to={`/${favorite.type === "fund" ? "funds" : "investments"}/${favorite.id}`}
-                exact={false}
-              >
-                <span className="pl-7">{favorite.name}</span>
+          {showSidebar && (
+            <Menu.Wrapper>
+              <Menu.Item icon={Building2} collapsable to="/">
+                My Firm
               </Menu.Item>
-            ))}
-            <Menu.Item icon={Search} collapsable to="/investments">
-              Search Investments
-            </Menu.Item>
-            {investments.map((inv: any) => (
-              <Menu.Item
-                key={inv.id ?? inv.slug}
-                to={`/investments/${inv.id ?? inv.slug}`}
-                exact={false}
-              >
-                <span className="pl-7">{inv.name}</span>
+              <Menu.Item icon={Star} to="/investments?favorites">
+                Favorite Investments
               </Menu.Item>
-            ))}
-            <Menu.Item icon={HandCoins} collapsable to="/funds">
-              Funds
-            </Menu.Item>
-            {funds.map((fund: any) => (
-              <Menu.Item
-                key={fund.id ?? fund.slug}
-                to={`/funds/${fund.id ?? fund.slug}`}
-                exact={false}
-              >
-                <span className="pl-7">{fund.name}</span>
+              {favoriteList.map((favorite) => (
+                <Menu.Item
+                  key={favorite.id}
+                  to={`/${favorite.type === "fund" ? "funds" : "investments"}/${favorite.id}`}
+                  exact={false}
+                >
+                  <span className="pl-7">{favorite.name}</span>
+                </Menu.Item>
+              ))}
+              <Menu.Item icon={Search} collapsable to="/investments">
+                Search Investments
               </Menu.Item>
-            ))}
-            <Menu.Item icon={Settings} collapsable to="/settings">
-              Settings
-            </Menu.Item>
-            <div className="mt-auto">
-              <Menu.Item icon={Bot} collapsable to="/ai">
-                Aurelia AI
+              {investments.map((inv: any) => (
+                <Menu.Item
+                  key={inv.id ?? inv.slug}
+                  to={`/investments/${inv.id ?? inv.slug}`}
+                  exact={false}
+                >
+                  <span className="pl-7">{inv.name}</span>
+                </Menu.Item>
+              ))}
+              <Menu.Item icon={HandCoins} collapsable to="/funds">
+                Funds
               </Menu.Item>
-            </div>
-          </Menu.Wrapper>
+              {funds.map((fund: any) => (
+                <Menu.Item
+                  key={fund.id ?? fund.slug}
+                  to={`/funds/${fund.id ?? fund.slug}`}
+                  exact={false}
+                >
+                  <span className="pl-7">{fund.name}</span>
+                </Menu.Item>
+              ))}
+              <Menu.Item icon={Settings} collapsable to="/settings">
+                Settings
+              </Menu.Item>
+              <div className="mt-auto">
+                <Menu.Item icon={Bot} collapsable to="/ai">
+                  Aurelia AI
+                </Menu.Item>
+              </div>
+            </Menu.Wrapper>
+          )}
           <main className="flex-1 flex flex-col bg-neutral-100 dark:bg-neutral-800">
             <header className="flex items-center justify-between p-2 bg-neutral-100 dark:bg-neutral-800">
               <div className="flex items-center gap-2 relative">
@@ -458,7 +505,11 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
                   {favoriteKey && (
                     <button
                       className="p-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white cursor-pointer"
-                      title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                      title={
+                        isFavorite
+                          ? "Remove from favorites"
+                          : "Add to favorites"
+                      }
                       onClick={handleToggleFavorite}
                     >
                       <Star
@@ -566,7 +617,12 @@ function SearchModal({ onClose }: { onClose: () => void }) {
   const [data, setData] = useState<{ investments: any[]; funds: any[] }>();
   const [query, setQuery] = useState("");
   const [contexts, setContexts] = useState<
-    { id: string; label: string; type: "investment" | "fund"; icon: React.ElementType }[]
+    {
+      id: string;
+      label: string;
+      type: "investment" | "fund";
+      icon: React.ElementType;
+    }[]
   >([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -585,12 +641,21 @@ function SearchModal({ onClose }: { onClose: () => void }) {
   // Context mode is active if the user is typing after the last "@"
   const atIndex = query.lastIndexOf("@");
   const isContextMode = atIndex !== -1;
-  const contextTerm = isContextMode ? query.slice(atIndex + 1).trim().toLowerCase() : "";
+  const contextTerm = isContextMode
+    ? query
+        .slice(atIndex + 1)
+        .trim()
+        .toLowerCase()
+    : "";
 
   const baseCommandsRef = useRef<Suggestion[]>([
     // static options
     { label: "Go to My Firm", to: "/", icon: Building2 },
-    { label: "Go to Favorite Investments", to: "/investments?favorites", icon: Star },
+    {
+      label: "Go to Favorite Investments",
+      to: "/investments?favorites",
+      icon: Star,
+    },
     { label: "Go to Search Investments", to: "/investments", icon: Search },
     { label: "Go to Funds", to: "/funds", icon: HandCoins },
     { label: "Go to Settings", to: "/settings", icon: Settings },
@@ -619,7 +684,8 @@ function SearchModal({ onClose }: { onClose: () => void }) {
     if (isContextMode) {
       if (!contextTerm) return [];
 
-      const filterFn = (name: string) => name.toLowerCase().includes(contextTerm);
+      const filterFn = (name: string) =>
+        name.toLowerCase().includes(contextTerm);
 
       const inv: Suggestion[] = data.investments
         .filter((i) => filterFn(i.name) && !contexts.some((c) => c.id === i.id))
@@ -644,7 +710,8 @@ function SearchModal({ onClose }: { onClose: () => void }) {
     // If no words, return the full (static + dynamic) command list
     if (!words.length) return baseCommandsRef.current.slice(0, 50);
 
-    const matches = (label: string) => words.every((w) => label.toLowerCase().includes(w));
+    const matches = (label: string) =>
+      words.every((w) => label.toLowerCase().includes(w));
 
     const dynamicCommands: Suggestion[] = [
       ...data.investments.map((i) => ({
@@ -702,8 +769,15 @@ function SearchModal({ onClose }: { onClose: () => void }) {
   );
 
   // Handle Backspace popping action stack when query is empty and not in context mode
-  const handleBackspaceNavigation = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && query === "" && !isContextMode && actionStack.length > 0) {
+  const handleBackspaceNavigation = (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (
+      e.key === "Backspace" &&
+      query === "" &&
+      !isContextMode &&
+      actionStack.length > 0
+    ) {
       e.preventDefault();
       setActionStack((stk) => stk.slice(0, -1));
     }
@@ -790,7 +864,11 @@ function SearchModal({ onClose }: { onClose: () => void }) {
                     {ctx.label}
                     <button
                       className="ml-1 hover:text-red-500"
-                      onClick={() => setContexts((prev) => prev.filter((c) => c.id !== ctx.id))}
+                      onClick={() =>
+                        setContexts((prev) =>
+                          prev.filter((c) => c.id !== ctx.id)
+                        )
+                      }
                     >
                       ×
                     </button>
@@ -813,7 +891,9 @@ function SearchModal({ onClose }: { onClose: () => void }) {
                   {ctx.label}
                   <button
                     className="ml-1 hover:text-red-500"
-                    onClick={() => setContexts((prev) => prev.filter((c) => c.id !== ctx.id))}
+                    onClick={() =>
+                      setContexts((prev) => prev.filter((c) => c.id !== ctx.id))
+                    }
                   >
                     ×
                   </button>
@@ -828,7 +908,11 @@ function SearchModal({ onClose }: { onClose: () => void }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Backspace" && query === "" && contexts.length > 0) {
+                if (
+                  e.key === "Backspace" &&
+                  query === "" &&
+                  contexts.length > 0
+                ) {
                   // delete pill
                   e.preventDefault();
                   setContexts((prev) => prev.slice(0, -1));
@@ -857,10 +941,10 @@ function SearchModal({ onClose }: { onClose: () => void }) {
                     }}
                   >
                     <Icon className="h-4 w-4 text-neutral-500" />
-                    <span className="flex-1">{isContextMode ? s.label : s.label}</span>
-                    <span
-                      className="inline-flex items-center justify-center h-4 w-4 text-[10px] font-medium rounded border border-neutral-400 dark:border-neutral-600 text-neutral-600 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800"
-                    >
+                    <span className="flex-1">
+                      {isContextMode ? s.label : s.label}
+                    </span>
+                    <span className="inline-flex items-center justify-center h-4 w-4 text-[10px] font-medium rounded border border-neutral-400 dark:border-neutral-600 text-neutral-600 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800">
                       {idx + 1}
                     </span>
                   </li>
@@ -873,3 +957,20 @@ function SearchModal({ onClose }: { onClose: () => void }) {
     </div>
   );
 }
+
+// Simplified navbar for mobile route (logo + user only)
+const MobileHeader: FC = () => (
+  <header className="flex items-center justify-between h-14 bg-neutral-900 dark:bg-neutral-50 px-4">
+    <img src={logo} className="h-10 dark:invert" />
+    <button className="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-neutral-800 dark:hover:bg-neutral-200 text-neutral-400 hover:text-neutral-300 dark:hover:text-neutral-700 cursor-pointer">
+      <div className="relative">
+        <CircleUser className="h-6 w-6 text-neutral-700 dark:text-neutral-200" />
+        <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center">
+          <span className="text-[10px] text-white font-medium">3</span>
+        </div>
+      </div>
+      <span className="text-sm">Alvaro Bernar</span>
+      <Ellipsis className="h-4 w-4" />
+    </button>
+  </header>
+);

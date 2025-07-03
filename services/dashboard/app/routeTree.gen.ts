@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SettingsImport } from './routes/settings'
+import { Route as MobileImport } from './routes/mobile'
 import { Route as InvestmentsImport } from './routes/investments'
 import { Route as FundsImport } from './routes/funds'
 import { Route as AiImport } from './routes/ai'
@@ -47,6 +48,12 @@ import { Route as InvestmentsNameCompanyPerformanceNewImport } from './routes/in
 const SettingsRoute = SettingsImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MobileRoute = MobileImport.update({
+  id: '/mobile',
+  path: '/mobile',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -262,6 +269,13 @@ declare module '@tanstack/react-router' {
       path: '/investments'
       fullPath: '/investments'
       preLoaderRoute: typeof InvestmentsImport
+      parentRoute: typeof rootRoute
+    }
+    '/mobile': {
+      id: '/mobile'
+      path: '/mobile'
+      fullPath: '/mobile'
+      preLoaderRoute: typeof MobileImport
       parentRoute: typeof rootRoute
     }
     '/settings': {
@@ -573,6 +587,7 @@ export interface FileRoutesByFullPath {
   '/ai': typeof AiRoute
   '/funds': typeof FundsRouteWithChildren
   '/investments': typeof InvestmentsRouteWithChildren
+  '/mobile': typeof MobileRoute
   '/settings': typeof SettingsRoute
   '/funds/$name': typeof FundsNameRouteWithChildren
   '/funds/new': typeof FundsNewRoute
@@ -604,6 +619,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
+  '/mobile': typeof MobileRoute
   '/settings': typeof SettingsRoute
   '/funds/new': typeof FundsNewRoute
   '/investments/new': typeof InvestmentsNewRoute
@@ -636,6 +652,7 @@ export interface FileRoutesById {
   '/ai': typeof AiRoute
   '/funds': typeof FundsRouteWithChildren
   '/investments': typeof InvestmentsRouteWithChildren
+  '/mobile': typeof MobileRoute
   '/settings': typeof SettingsRoute
   '/funds/$name': typeof FundsNameRouteWithChildren
   '/funds/new': typeof FundsNewRoute
@@ -671,6 +688,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/funds'
     | '/investments'
+    | '/mobile'
     | '/settings'
     | '/funds/$name'
     | '/funds/new'
@@ -701,6 +719,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ai'
+    | '/mobile'
     | '/settings'
     | '/funds/new'
     | '/investments/new'
@@ -731,6 +750,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/funds'
     | '/investments'
+    | '/mobile'
     | '/settings'
     | '/funds/$name'
     | '/funds/new'
@@ -765,6 +785,7 @@ export interface RootRouteChildren {
   AiRoute: typeof AiRoute
   FundsRoute: typeof FundsRouteWithChildren
   InvestmentsRoute: typeof InvestmentsRouteWithChildren
+  MobileRoute: typeof MobileRoute
   SettingsRoute: typeof SettingsRoute
 }
 
@@ -773,6 +794,7 @@ const rootRouteChildren: RootRouteChildren = {
   AiRoute: AiRoute,
   FundsRoute: FundsRouteWithChildren,
   InvestmentsRoute: InvestmentsRouteWithChildren,
+  MobileRoute: MobileRoute,
   SettingsRoute: SettingsRoute,
 }
 
@@ -790,6 +812,7 @@ export const routeTree = rootRoute
         "/ai",
         "/funds",
         "/investments",
+        "/mobile",
         "/settings"
       ]
     },
@@ -814,6 +837,9 @@ export const routeTree = rootRoute
         "/investments/new",
         "/investments/"
       ]
+    },
+    "/mobile": {
+      "filePath": "mobile.tsx"
     },
     "/settings": {
       "filePath": "settings.tsx"

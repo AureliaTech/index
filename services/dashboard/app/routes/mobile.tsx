@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { getCompanies } from "../../db/gen/ts/companies_sql";
 import client from "../db";
 import { createServerFn } from "@tanstack/react-start";
+import * as fs from "node:fs/promises";
 
 const getInvestments = createServerFn({ method: "GET" }).handler(async () => {
   try {
@@ -15,6 +16,90 @@ const getInvestments = createServerFn({ method: "GET" }).handler(async () => {
     return { companies: [] as { id: string; name: string }[] };
   }
 });
+
+// ---------- Server-side helpers ----------
+
+// Transcribe base64-encoded audio using Deepgram. Also store the raw audio under app/data/<company>/
+const transcribeAudio = createServerFn({ method: "POST" })
+  .validator((d: { company: string; audio: string }) => d)
+  .handler(async ({ data }) => {
+    const deepgramApiKey = "1ef67c5c25cddaf371b114e1305508e429ca1b5b"; // TODO: move to env or secret manager
+
+    try {
+      const { company, audio } = data;
+      const buf = Buffer.from(audio, "base64");
+
+      // Persist audio file so we have a reference later
+      const dir = `app/data/${company}`;
+      await fs.mkdir(dir, { recursive: true });
+      const filename = `audio-${Date.now()}.webm`;
+      const filepath = `${dir}/${filename}`;
+      await fs.writeFile(filepath, buf);
+
+      // Dynamically import SDK only on server to avoid bundling in client
+      const { createClient } = await import("@deepgram/sdk");
+      const deepgram = createClient(deepgramApiKey);
+
+
+      const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
+        buf,
+        {
+          model: "nova-3",
+          language: "multi",
+        }
+      );
+
+      if (error) throw error;
+
+      const transcript: string = (
+        result?.results?.channels?.[0]?.alternatives?.[0]?.transcript ?? ""
+      ).trim();
+
+      return { transcript, audioPath: filepath };
+    } catch (err: any) {
+      console.error("Deepgram transcription error", err);
+      return { transcript: "", error: err?.message ?? "unknown" };
+    }
+  });
+
+// Save transcript as comment for company
+const saveComment = createServerFn({ method: "POST" })
+  .validator((payload: { company: string; content: string }) => payload)
+  .handler(async ({ data: { company, content } }) => {
+    const file = `app/data/${company}/general-data.json`;
+
+    let json: Record<string, unknown> = {};
+    try {
+      json = JSON.parse(await fs.readFile(file, "utf8"));
+    } catch {
+      json = {};
+    }
+
+    type Comment = {
+      title: string;
+      date: string;
+      content: string;
+      author: string;
+      labels: any[];
+    };
+
+    const highlights: Comment[] = Array.isArray(json["deal-team-highlights"])
+      ? (json["deal-team-highlights"] as Comment[])
+      : [];
+
+    const newComment: Comment = {
+      title: content.slice(0, 40) || "Audio note",
+      content,
+      date: new Date().toISOString(),
+      author: "Mobile user", // could be dynamic
+      labels: [],
+    };
+
+    json["deal-team-highlights"] = [newComment, ...highlights];
+
+    await fs.writeFile(file, JSON.stringify(json, null, 2));
+    return { success: true };
+  });
 
 export const Route = createFileRoute("/mobile")({
   component: MobileRecorderPage,
@@ -33,10 +118,14 @@ function MobileRecorderPage() {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const recordedBlobRef = useRef<Blob | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationIdRef = useRef<number | null>(null);
   const [level, setLevel] = useState(0);
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const startRecording = async () => {
     if (recording || !selectedCompany) return;
@@ -54,7 +143,8 @@ function MobileRecorderPage() {
 
       // ------ WebAudio analyser for real-time levels ------
       try {
-        const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const audioCtx = new (window.AudioContext ||
+          (window as any).webkitAudioContext)();
         const source = audioCtx.createMediaStreamSource(stream);
         const analyser = audioCtx.createAnalyser();
         analyser.fftSize = 512;
@@ -84,10 +174,12 @@ function MobileRecorderPage() {
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: "audio/webm" });
         setAudioUrl(URL.createObjectURL(blob));
+        recordedBlobRef.current = blob;
         stream.getTracks().forEach((track) => track.stop());
 
         // cleanup analyser/audio context
-        if (animationIdRef.current) cancelAnimationFrame(animationIdRef.current);
+        if (animationIdRef.current)
+          cancelAnimationFrame(animationIdRef.current);
         animationIdRef.current = null;
         audioContextRef.current?.close();
         audioContextRef.current = null;
@@ -106,6 +198,39 @@ function MobileRecorderPage() {
     if (!recording) return;
     mediaRecorderRef.current?.stop();
     setRecording(false);
+  };
+
+  const handleSave = async () => {
+    if (!recordedBlobRef.current || isSaving || !selectedCompany) return;
+    setIsSaving(true);
+    try {
+      const arrayBuff = await recordedBlobRef.current.arrayBuffer();
+      const base64 = btoa(
+        Array.from(new Uint8Array(arrayBuff))
+          .map((b) => String.fromCharCode(b))
+          .join("")
+      );
+
+      const { transcript, error } = await transcribeAudio({
+        data: { company: selectedCompany, audio: base64 },
+      } as any);
+
+      if (error || !transcript) {
+        console.error("Transcription failed", error);
+        setIsSaving(false);
+        return;
+      }
+
+      await saveComment({
+        data: { company: selectedCompany, content: transcript },
+      } as any);
+
+      setSaved(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   useEffect(() => {
@@ -177,14 +302,34 @@ function MobileRecorderPage() {
             <button
               onClick={recording ? stopRecording : startRecording}
               className={`flex items-center justify-center rounded-full h-24 w-24 transition-transform duration-75 ${recording ? "bg-red-500" : "bg-green-600"} text-white text-lg focus:outline-none`}
-              style={recording ? { transform: `scale(${1 + level})` } : undefined}
+              style={
+                recording ? { transform: `scale(${1 + level})` } : undefined
+              }
             >
               {recording ? "Stop" : "Rec"}
             </button>
           </div>
 
           {audioUrl && (
-            <audio className="mt-6 w-full max-w-md" controls src={audioUrl} />
+            <audio
+              className="mt-6 w-full max-w-md"
+              controls
+              src={audioUrl}
+            />
+          )}
+
+          {audioUrl && !saved && (
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="mt-4 px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-50"
+            >
+              {isSaving ? "Saving…" : "Save"}
+            </button>
+          )}
+
+          {saved && (
+            <p className="mt-4 text-green-600 font-medium">Saved!</p>
           )}
         </>
       )}

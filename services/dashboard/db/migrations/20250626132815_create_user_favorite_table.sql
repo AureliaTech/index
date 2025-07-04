@@ -2,7 +2,7 @@
 create table user_favorite
 (
     id int generated always as identity,
-    user_id uuid not null,
+    user_id int not null,
     created_at timestamp default current_timestamp,
     favorite_type varchar(255) not null check (favorite_type in ('fund', 'company')),
     favorite_id int not null,

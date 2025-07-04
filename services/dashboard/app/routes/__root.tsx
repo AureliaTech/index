@@ -37,7 +37,7 @@ import * as fs from "node:fs/promises";
 import { useRouter } from "@tanstack/react-router";
 import logo from "../assets/aurelia-logo.png?url";
 import { createServerFn } from "@tanstack/react-start";
-import { getCompanies } from "../../db/gen/ts/companies_sql";
+import { getCompanies } from "../../db/gen/ts/company_sql";
 import { getFunds } from "../../db/gen/ts/fund_sql";
 import client from "../db";
 
@@ -52,7 +52,7 @@ const getMenuData = createServerFn({
     const companies = await getCompanies(client);
 
     const investments = companies.map((c) => ({
-      id: c.slug,
+      id: c.id,
       slug: c.slug,
       name: c.name,
     }));
@@ -64,6 +64,7 @@ const getMenuData = createServerFn({
       slug: f.slug,
       name: f.name,
     }));
+
     const favoritesRaw = JSON.parse(
       await fs.readFile("app/data/favorites.json", "utf8")
     );
@@ -73,8 +74,8 @@ const getMenuData = createServerFn({
       type,
       name:
         type === "investment"
-          ? investments.find((investment) => investment.id === id)?.name
-          : funds.find((fund) => fund.id === id)?.name,
+          ? investments.find((investment) => investment.slug === id)?.name
+          : funds.find((fund) => fund.slug === id)?.name,
     }));
     return { investments, funds, favorites };
   } catch (error) {
@@ -368,8 +369,8 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         ...f,
         name:
           f.type === "investment"
-            ? investments.find((i: any) => i.id === f.id)?.name
-            : funds.find((fn: any) => fn.id === f.id)?.name,
+            ? investments.find((i: any) => i.slug === f.slug)?.name
+            : funds.find((fn: any) => fn.slug === f.slug)?.name,
       }));
       setFavoriteList(enriched);
     }
@@ -467,8 +468,8 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               </Menu.Item>
               {investments.map((inv: any) => (
                 <Menu.Item
-                  key={inv.id ?? inv.slug}
-                  to={`/investments/${inv.id ?? inv.slug}`}
+                  key={inv.slug}
+                  to={`/investments/${inv.slug}`}
                   exact={false}
                 >
                   <span className="pl-7">{inv.name}</span>
@@ -479,8 +480,8 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               </Menu.Item>
               {funds.map((fund: any) => (
                 <Menu.Item
-                  key={fund.id ?? fund.slug}
-                  to={`/funds/${fund.id ?? fund.slug}`}
+                  key={fund.slug}
+                  to={`/funds/${fund.slug}`}
                   exact={false}
                 >
                   <span className="pl-7">{fund.name}</span>

@@ -5,11 +5,12 @@ interface Client {
 }
 
 export const getCompaniesQuery = `-- name: GetCompanies :many
-SELECT slug, name FROM company ORDER BY name`;
+SELECT slug, name, id FROM company ORDER BY name`;
 
 export interface GetCompaniesRow {
     slug: string;
     name: string;
+    id: number;
 }
 
 export async function getCompanies(client: Client): Promise<GetCompaniesRow[]> {
@@ -21,13 +22,14 @@ export async function getCompanies(client: Client): Promise<GetCompaniesRow[]> {
     return result.rows.map(row => {
         return {
             slug: row[0],
-            name: row[1]
+            name: row[1],
+            id: row[2]
         };
     });
 }
 
 export const getCompanyBySlugQuery = `-- name: GetCompanyBySlug :one
-SELECT slug, name FROM company WHERE slug = $1`;
+SELECT slug, name, id FROM company WHERE slug = $1`;
 
 export interface GetCompanyBySlugArgs {
     slug: string;
@@ -36,6 +38,7 @@ export interface GetCompanyBySlugArgs {
 export interface GetCompanyBySlugRow {
     slug: string;
     name: string;
+    id: number;
 }
 
 export async function getCompanyBySlug(client: Client, args: GetCompanyBySlugArgs): Promise<GetCompanyBySlugRow | null> {
@@ -50,7 +53,8 @@ export async function getCompanyBySlug(client: Client, args: GetCompanyBySlugArg
     const row = result.rows[0];
     return {
         slug: row[0],
-        name: row[1]
+        name: row[1],
+        id: row[2]
     };
 }
 
@@ -64,7 +68,7 @@ LEFT JOIN (
 WHERE c.slug = $1`;
 
 export interface GetCompanyBySlugWithFavoriteDataArgs {
-    userId: string;
+    userId: number;
 }
 
 export interface GetCompanyBySlugWithFavoriteDataRow {

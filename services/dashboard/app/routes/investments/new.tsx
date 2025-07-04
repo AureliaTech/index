@@ -1,32 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
-import { createServerFn } from "@tanstack/react-start";
-import {
-  getCompanyBySlug,
-  createCompany as createDbCompany,
-} from "../../../db/gen/ts/company_sql";
-import client from "../../db";
-
-
-export const createCompany = createServerFn({ method: "POST" })
-  .validator((data: { name: string; slug: string }) => data)
-  .handler(async ({ data }) => {
-    try {
-      // Abort if slug already exists
-      const existing = await getCompanyBySlug(client, { slug: data.slug });
-      if (existing) {
-        return { error: "slug_exists" } as const;
-      }
-
-      // Insert the new company (slug will be generated in the DB)
-      await createDbCompany(client, { name: data.name });
-
-      return { success: true } as const;
-    } catch (error) {
-      console.error(error);
-      return { error: "error_creating_company" } as const;
-    }
-  });
+import { createCompany } from "../../functions/company";
 
 export const Route = createFileRoute("/investments/new")({
   component: RouteComponent,

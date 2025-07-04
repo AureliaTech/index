@@ -1,23 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
-import { getCompanies } from "../../db/gen/ts/companies_sql";
-import client from "../db";
 import { createServerFn } from "@tanstack/react-start";
 import * as fs from "node:fs/promises";
-
-const getInvestments = createServerFn({ method: "GET" }).handler(async () => {
-  try {
-    await client.connect().catch(() => {});
-    const rows = await getCompanies(client);
-    const companies = rows.map((c) => ({ id: c.slug, name: c.name }));
-    return { companies };
-  } catch (error) {
-    console.error("Error loading companies for mobile page", error);
-    return { companies: [] as { id: string; name: string }[] };
-  }
-});
-
-// ---------- Server-side helpers ----------
+import { getInvestments } from "../functions/company";
 
 // Transcribe base64-encoded audio using Deepgram. Also store the raw audio under app/data/<company>/
 const transcribeAudio = createServerFn({ method: "POST" })
@@ -40,14 +25,11 @@ const transcribeAudio = createServerFn({ method: "POST" })
       const { createClient } = await import("@deepgram/sdk");
       const deepgram = createClient(deepgramApiKey);
 
-
-      const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
-        buf,
-        {
+      const { result, error } =
+        await deepgram.listen.prerecorded.transcribeFile(buf, {
           model: "nova-3",
           language: "multi",
-        }
-      );
+        });
 
       if (error) throw error;
 
@@ -311,11 +293,7 @@ function MobileRecorderPage() {
           </div>
 
           {audioUrl && (
-            <audio
-              className="mt-6 w-full max-w-md"
-              controls
-              src={audioUrl}
-            />
+            <audio className="mt-6 w-full max-w-md" controls src={audioUrl} />
           )}
 
           {audioUrl && !saved && (
@@ -328,9 +306,7 @@ function MobileRecorderPage() {
             </button>
           )}
 
-          {saved && (
-            <p className="mt-4 text-green-600 font-medium">Saved!</p>
-          )}
+          {saved && <p className="mt-4 text-green-600 font-medium">Saved!</p>}
         </>
       )}
     </div>

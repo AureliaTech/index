@@ -143,13 +143,27 @@ ALTER TABLE public.company ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 --
 
 CREATE TABLE public.deal_team_highlight (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    id integer NOT NULL,
     description text NOT NULL,
     title character varying(255) NOT NULL,
-    author_id uuid NOT NULL,
+    author_id integer NOT NULL,
     company_id integer NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: deal_team_highlight_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+ALTER TABLE public.deal_team_highlight ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.deal_team_highlight_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
 );
 
 
@@ -158,8 +172,8 @@ CREATE TABLE public.deal_team_highlight (
 --
 
 CREATE TABLE public.deal_team_highlight_label (
-    highlight_id uuid NOT NULL,
-    label_id uuid NOT NULL
+    highlight_id integer NOT NULL,
+    label_id integer NOT NULL
 );
 
 
@@ -195,9 +209,23 @@ ALTER TABLE public.fund ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 --
 
 CREATE TABLE public.label (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    id integer NOT NULL,
     color character varying(32) NOT NULL,
     text character varying(255) NOT NULL
+);
+
+
+--
+-- Name: label_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+ALTER TABLE public.label ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.label_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
 );
 
 
@@ -216,7 +244,7 @@ CREATE TABLE public.schema_migrations (
 
 CREATE TABLE public.user_favorite (
     id integer NOT NULL,
-    user_id uuid NOT NULL,
+    user_id integer NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     favorite_type character varying(255) NOT NULL,
     favorite_id integer NOT NULL,
@@ -243,8 +271,22 @@ ALTER TABLE public.user_favorite ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTIT
 --
 
 CREATE TABLE public.users (
-    id uuid NOT NULL,
+    id integer NOT NULL,
     username character varying(255) NOT NULL
+);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+ALTER TABLE public.users ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
 );
 
 
@@ -497,5 +539,4 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20250626122722'),
     ('20250626124026'),
     ('20250626132815'),
-    ('20250627155032'),
-    ('20250627160000');
+    ('20250627155032');

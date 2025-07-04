@@ -1,9 +1,9 @@
 -- migrate:up
 CREATE TABLE deal_team_highlight (
-    id uuid primary key default gen_random_uuid(),
+    id int generated always as identity primary key,
     description text not null,
     title varchar(255) not null,
-    author_id uuid not null,
+    author_id int not null,
     company_id int not null,
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
@@ -12,15 +12,15 @@ CREATE TABLE deal_team_highlight (
 );
 
 CREATE TABLE label (
-  id uuid primary key default gen_random_uuid(),
+  id int generated always as identity primary key,
   color  varchar(32)  NOT NULL,
   text   varchar(255) NOT NULL,
   UNIQUE (color, text)     
 );
 
 CREATE TABLE deal_team_highlight_label (       
-  highlight_id uuid  REFERENCES deal_team_highlight(id) ON DELETE CASCADE,
-  label_id     uuid   REFERENCES label(id)             ON DELETE RESTRICT,
+  highlight_id int  REFERENCES deal_team_highlight(id) ON DELETE CASCADE,
+  label_id     int   REFERENCES label(id)             ON DELETE RESTRICT,
   PRIMARY KEY (highlight_id, label_id)
 );
 

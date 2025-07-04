@@ -6,6 +6,7 @@ import {
   createLabel as createDbLabel,
   attachLabelToHighlight,
   getLabelsByText,
+  getDealTeamHighlightById as getDbDealTeamHighlightById,
 } from "../../db/gen/ts/deal_team_highlight_sql";
 
 export const getDealTeamHighlights = createServerFn({ method: "GET" })
@@ -40,9 +41,13 @@ export const createDealTeamHighlight = createServerFn({ method: "POST" })
       //start transaction
       // await client.query("BEGIN");
 
-      const existingLabels = await getLabelsByText(client, {
-        text: data.labels.map((label) => label.text).join(","),
-      });
+      // Fetch already-existing labels only if at least one label was provided.
+      const existingLabels = data.labels.length
+        ? await getLabelsByText(client, {
+            // Postgres expects a text[]; we send an array literal
+            text: `{${data.labels.map((l) => l.text).join(",")}}`,
+          })
+        : [];
 
       //create labels that don't exist
       const labels = await Promise.all(
@@ -84,6 +89,21 @@ export const createDealTeamHighlight = createServerFn({ method: "POST" })
     } catch (error) {
       console.error("Error creating deal team highlight", error);
       //await client.query("ROLLBACK");
+      return { highlight: null };
+    }
+  });
+
+export const getDealTeamHighlightById = createServerFn({ method: "GET" })
+  .validator((data: { id: string }) => data)
+  .handler(async ({ data }) => {
+    try {
+      await client.connect().catch(() => {});
+      const highlight = await getDbDealTeamHighlightById(client, {
+        id: Number(data.id),
+      });
+      return { highlight };
+    } catch (error) {
+      console.error("Error getting deal team highlight by id", error);
       return { highlight: null };
     }
   });

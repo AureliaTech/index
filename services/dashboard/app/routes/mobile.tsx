@@ -1,8 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { createServerFn } from "@tanstack/react-start";
 import * as fs from "node:fs/promises";
 import { getInvestments } from "../functions/company";
+import { createDealTeamHighlight } from "../functions/deal-team-highlights";
+import { Plus } from "lucide-react";
 
 // Transcribe base64-encoded audio using Deepgram. Also store the raw audio under app/data/<company>/
 const transcribeAudio = createServerFn({ method: "POST" })
@@ -44,44 +46,9 @@ const transcribeAudio = createServerFn({ method: "POST" })
     }
   });
 
-// Save transcript as comment for company
-const saveComment = createServerFn({ method: "POST" })
-  .validator((payload: { company: string; content: string }) => payload)
-  .handler(async ({ data: { company, content } }) => {
-    const file = `app/data/${company}/general-data.json`;
-
-    let json: Record<string, unknown> = {};
-    try {
-      json = JSON.parse(await fs.readFile(file, "utf8"));
-    } catch {
-      json = {};
-    }
-
-    type Comment = {
-      title: string;
-      date: string;
-      content: string;
-      author: string;
-      labels: any[];
-    };
-
-    const highlights: Comment[] = Array.isArray(json["deal-team-highlights"])
-      ? (json["deal-team-highlights"] as Comment[])
-      : [];
-
-    const newComment: Comment = {
-      title: content.slice(0, 40) || "Audio note",
-      content,
-      date: new Date().toISOString(),
-      author: "Mobile user", // could be dynamic
-      labels: [],
-    };
-
-    json["deal-team-highlights"] = [newComment, ...highlights];
-
-    await fs.writeFile(file, JSON.stringify(json, null, 2));
-    return { success: true };
-  });
+// The logic previously handled by `saveComment` is now managed by the
+// `createDealTeamHighlight` server function inside
+// ../functions/deal-team-highlights.
 
 export const Route = createFileRoute("/mobile")({
   component: MobileRecorderPage,
@@ -203,8 +170,14 @@ function MobileRecorderPage() {
         return;
       }
 
-      await saveComment({
-        data: { company: selectedCompany, content: transcript },
+      await createDealTeamHighlight({
+        data: {
+          companyId: Number(selectedCompany),
+          title: transcript.slice(0, 40) || "Audio note",
+          description: transcript,
+          authorId: 1, // TODO: replace with actual user id when available
+          labels: [],
+        },
       } as any);
 
       setSaved(true);
@@ -224,7 +197,7 @@ function MobileRecorderPage() {
   }, [audioUrl]);
 
   const isCompanySelected = Boolean(
-    selectedCompany && companies.find((c) => c.id === selectedCompany)
+    selectedCompany && companies.find((c) => String(c.id) === selectedCompany)
   );
 
   console.log("Companies loaded:", companies);
@@ -266,7 +239,7 @@ function MobileRecorderPage() {
         <>
           <p className="text-neutral-700 dark:text-neutral-300 text-sm">
             Recording for:{" "}
-            {companies.find((c) => c.id === selectedCompany)?.name}
+            {companies.find((c) => String(c.id) === selectedCompany)?.name}
           </p>
           <div className="relative flex items-center justify-center">
             {/* Expanding wave ring */}
@@ -300,8 +273,9 @@ function MobileRecorderPage() {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="mt-4 px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-50"
+              className="flex items-center gap-2 rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 px-4 py-2 text-sm text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:cursor-pointer"
             >
+              <Plus className="h-4 w-4" />
               {isSaving ? "Saving…" : "Save"}
             </button>
           )}
@@ -309,6 +283,9 @@ function MobileRecorderPage() {
           {saved && <p className="mt-4 text-green-600 font-medium">Saved!</p>}
         </>
       )}
+
+      {/* Nested routes (e.g., /mobile/:id) render here */}
+      <Outlet />
     </div>
   );
 }

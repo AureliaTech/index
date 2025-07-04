@@ -249,8 +249,8 @@ export async function getLabelsByText(client: Client, args: GetLabelsByTextArgs)
 }
 
 export const createLabelQuery = `-- name: CreateLabel :one
-INSERT INTO label (id, color, text)
-VALUES (gen_random_uuid(), $1, $2)
+INSERT INTO label (color, text)
+VALUES ($1, $2)
 ON CONFLICT (color, text) DO UPDATE
 SET    color = EXCLUDED.color,
        text  = EXCLUDED.text
@@ -285,8 +285,8 @@ export async function createLabel(client: Client, args: CreateLabelArgs): Promis
 }
 
 export const createDealTeamHighlightQuery = `-- name: CreateDealTeamHighlight :one
-INSERT INTO deal_team_highlight (id, title, description, author_id, company_id)
-VALUES (gen_random_uuid(), $1, $2, $3, $4)
+INSERT INTO deal_team_highlight (title, description, author_id, company_id)
+VALUES ($1, $2, $3, $4)
 RETURNING id, description, title, author_id, company_id, created_at, updated_at`;
 
 export interface CreateDealTeamHighlightArgs {

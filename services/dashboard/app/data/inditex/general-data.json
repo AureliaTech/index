@@ -18,7 +18,10 @@
       "Denise Kingsmill (Independent)",
       "Rodrigo Echenique Gordillo (Independent)"
     ],
-    "dealTeam": ["Mónica Gómez Acebo", "Carlos Álvarez"],
+    "dealTeam": [
+      "Mónica Gómez Acebo",
+      "Carlos Álvarez"
+    ],
     "acquisitionDate": "2024-04-15",
     "realizationDate": null,
     "entryValuation": {
@@ -44,21 +47,80 @@
   "dashboard": {
     "name": "inditex",
     "netDebt": {
-      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-      "values": [1800000, 1725000, 1650000, 1575000, 1500000, 1425000]
+      "labels": [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun"
+      ],
+      "values": [
+        1800000,
+        1725000,
+        1650000,
+        1575000,
+        1500000,
+        1425000
+      ]
     },
     "revenue": {
-      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-      "actual": [2900000, 3100000, 3350000, 3280000, 3520000, 3780000],
-      "budget": [2850000, 3050000, 3250000, 3300000, 3450000, 3700000]
+      "labels": [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun"
+      ],
+      "actual": [
+        2900000,
+        3100000,
+        3350000,
+        3280000,
+        3520000,
+        3780000
+      ],
+      "budget": [
+        2850000,
+        3050000,
+        3250000,
+        3300000,
+        3450000,
+        3700000
+      ]
     },
     "capexInvested": {
-      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-      "values": [420000, 410000, 460000, 490000, 475000, 500000]
+      "labels": [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun"
+      ],
+      "values": [
+        420000,
+        410000,
+        460000,
+        490000,
+        475000,
+        500000
+      ]
     },
     "operatingChargesByGeography": {
-      "labels": ["Europe", "Americas", "Asia-Pacific", "Other"],
-      "values": [47, 28, 20, 5]
+      "labels": [
+        "Europe",
+        "Americas",
+        "Asia-Pacific",
+        "Other"
+      ],
+      "values": [
+        47,
+        28,
+        20,
+        5
+      ]
     }
   },
   "valuation": [
@@ -215,6 +277,13 @@
     ]
   },
   "deal-team-highlights": [
+    {
+      "title": "hola qué tal álvaro cómo estás",
+      "content": "hola qué tal álvaro cómo estás",
+      "date": "2025-07-03T21:31:53.041Z",
+      "author": "Mobile user",
+      "labels": []
+    },
     {
       "title": "Call with new CEO",
       "date": "2025-01-08T09:30:00Z",

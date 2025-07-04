@@ -93,16 +93,16 @@ SELECT id, color, text FROM label;
 SELECT id, color, text FROM label WHERE text = ANY($1);
 
 -- name: CreateLabel :one
-INSERT INTO label (id, color, text)
-VALUES (gen_random_uuid(), $1, $2)
+INSERT INTO label (color, text)
+VALUES ($1, $2)
 ON CONFLICT (color, text) DO UPDATE
 SET    color = EXCLUDED.color,
        text  = EXCLUDED.text
 RETURNING *;
 
 -- name: CreateDealTeamHighlight :one
-INSERT INTO deal_team_highlight (id, title, description, author_id, company_id)
-VALUES (gen_random_uuid(), $1, $2, $3, $4)
+INSERT INTO deal_team_highlight (title, description, author_id, company_id)
+VALUES ($1, $2, $3, $4)
 RETURNING *;
 
 -- name: AttachLabelToHighlight :exec

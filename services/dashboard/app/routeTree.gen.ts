@@ -19,6 +19,18 @@ import { Route as AiImport } from './routes/ai'
 import { Route as IndexImport } from './routes/index'
 import { Route as InvestmentsIndexImport } from './routes/investments/index'
 import { Route as FundsIndexImport } from './routes/funds/index'
+import { Route as SettingsUsersImport } from './routes/settings/users'
+import { Route as SettingsThemingImport } from './routes/settings/theming'
+import { Route as SettingsSecurityImport } from './routes/settings/security'
+import { Route as SettingsRolesImport } from './routes/settings/roles'
+import { Route as SettingsProfileImport } from './routes/settings/profile'
+import { Route as SettingsPortfolioCompaniesImport } from './routes/settings/portfolio-companies'
+import { Route as SettingsNotificationsImport } from './routes/settings/notifications'
+import { Route as SettingsLabelsImport } from './routes/settings/labels'
+import { Route as SettingsInvestmentsImport } from './routes/settings/investments'
+import { Route as SettingsFundsImport } from './routes/settings/funds'
+import { Route as SettingsBillingImport } from './routes/settings/billing'
+import { Route as SettingsAuditLogsImport } from './routes/settings/audit-logs'
 import { Route as InvestmentsNewImport } from './routes/investments/new'
 import { Route as InvestmentsNameImport } from './routes/investments/$name'
 import { Route as FundsNewImport } from './routes/funds/new'
@@ -26,6 +38,9 @@ import { Route as FundsNameImport } from './routes/funds/$name'
 import { Route as SettingsPortfolioCompaniesIndexImport } from './routes/settings/portfolio-companies/index'
 import { Route as InvestmentsNameIndexImport } from './routes/investments/$name/index'
 import { Route as FundsNameIndexImport } from './routes/funds/$name/index'
+import { Route as SettingsUsersInviteImport } from './routes/settings/users/invite'
+import { Route as SettingsUsersByUserImport } from './routes/settings/users/by-user'
+import { Route as SettingsUsersByRoleImport } from './routes/settings/users/by-role'
 import { Route as InvestmentsNameValuationImport } from './routes/investments/$name/valuation'
 import { Route as InvestmentsNameTemplateConfigImport } from './routes/investments/$name/template-config'
 import { Route as InvestmentsNameShareholdersStructureImport } from './routes/investments/$name/shareholders-structure'
@@ -94,6 +109,80 @@ const FundsIndexRoute = FundsIndexImport.update({
   getParentRoute: () => FundsRoute,
 } as any)
 
+const SettingsUsersRoute = SettingsUsersImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsThemingRoute = SettingsThemingImport.update({
+  id: '/theming',
+  path: '/theming',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsSecurityRoute = SettingsSecurityImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsRolesRoute = SettingsRolesImport.update({
+  id: '/roles',
+  path: '/roles',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsProfileRoute = SettingsProfileImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsPortfolioCompaniesRoute = SettingsPortfolioCompaniesImport.update(
+  {
+    id: '/portfolio-companies',
+    path: '/portfolio-companies',
+    getParentRoute: () => SettingsRoute,
+  } as any,
+)
+
+const SettingsNotificationsRoute = SettingsNotificationsImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsLabelsRoute = SettingsLabelsImport.update({
+  id: '/labels',
+  path: '/labels',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsInvestmentsRoute = SettingsInvestmentsImport.update({
+  id: '/investments',
+  path: '/investments',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsFundsRoute = SettingsFundsImport.update({
+  id: '/funds',
+  path: '/funds',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsBillingRoute = SettingsBillingImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
+const SettingsAuditLogsRoute = SettingsAuditLogsImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => SettingsRoute,
+} as any)
+
 const InvestmentsNewRoute = InvestmentsNewImport.update({
   id: '/new',
   path: '/new',
@@ -120,9 +209,9 @@ const FundsNameRoute = FundsNameImport.update({
 
 const SettingsPortfolioCompaniesIndexRoute =
   SettingsPortfolioCompaniesIndexImport.update({
-    id: '/portfolio-companies/',
-    path: '/portfolio-companies/',
-    getParentRoute: () => SettingsRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => SettingsPortfolioCompaniesRoute,
   } as any)
 
 const InvestmentsNameIndexRoute = InvestmentsNameIndexImport.update({
@@ -135,6 +224,24 @@ const FundsNameIndexRoute = FundsNameIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => FundsNameRoute,
+} as any)
+
+const SettingsUsersInviteRoute = SettingsUsersInviteImport.update({
+  id: '/invite',
+  path: '/invite',
+  getParentRoute: () => SettingsUsersRoute,
+} as any)
+
+const SettingsUsersByUserRoute = SettingsUsersByUserImport.update({
+  id: '/by-user',
+  path: '/by-user',
+  getParentRoute: () => SettingsUsersRoute,
+} as any)
+
+const SettingsUsersByRoleRoute = SettingsUsersByRoleImport.update({
+  id: '/by-role',
+  path: '/by-role',
+  getParentRoute: () => SettingsUsersRoute,
 } as any)
 
 const InvestmentsNameValuationRoute = InvestmentsNameValuationImport.update({
@@ -321,6 +428,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvestmentsNewImport
       parentRoute: typeof InvestmentsImport
     }
+    '/settings/audit-logs': {
+      id: '/settings/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/settings/audit-logs'
+      preLoaderRoute: typeof SettingsAuditLogsImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/billing': {
+      id: '/settings/billing'
+      path: '/billing'
+      fullPath: '/settings/billing'
+      preLoaderRoute: typeof SettingsBillingImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/funds': {
+      id: '/settings/funds'
+      path: '/funds'
+      fullPath: '/settings/funds'
+      preLoaderRoute: typeof SettingsFundsImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/investments': {
+      id: '/settings/investments'
+      path: '/investments'
+      fullPath: '/settings/investments'
+      preLoaderRoute: typeof SettingsInvestmentsImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/labels': {
+      id: '/settings/labels'
+      path: '/labels'
+      fullPath: '/settings/labels'
+      preLoaderRoute: typeof SettingsLabelsImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/notifications': {
+      id: '/settings/notifications'
+      path: '/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof SettingsNotificationsImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/portfolio-companies': {
+      id: '/settings/portfolio-companies'
+      path: '/portfolio-companies'
+      fullPath: '/settings/portfolio-companies'
+      preLoaderRoute: typeof SettingsPortfolioCompaniesImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/profile': {
+      id: '/settings/profile'
+      path: '/profile'
+      fullPath: '/settings/profile'
+      preLoaderRoute: typeof SettingsProfileImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/roles': {
+      id: '/settings/roles'
+      path: '/roles'
+      fullPath: '/settings/roles'
+      preLoaderRoute: typeof SettingsRolesImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/security': {
+      id: '/settings/security'
+      path: '/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof SettingsSecurityImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/theming': {
+      id: '/settings/theming'
+      path: '/theming'
+      fullPath: '/settings/theming'
+      preLoaderRoute: typeof SettingsThemingImport
+      parentRoute: typeof SettingsImport
+    }
+    '/settings/users': {
+      id: '/settings/users'
+      path: '/users'
+      fullPath: '/settings/users'
+      preLoaderRoute: typeof SettingsUsersImport
+      parentRoute: typeof SettingsImport
+    }
     '/funds/': {
       id: '/funds/'
       path: '/'
@@ -440,6 +631,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvestmentsNameValuationImport
       parentRoute: typeof InvestmentsNameImport
     }
+    '/settings/users/by-role': {
+      id: '/settings/users/by-role'
+      path: '/by-role'
+      fullPath: '/settings/users/by-role'
+      preLoaderRoute: typeof SettingsUsersByRoleImport
+      parentRoute: typeof SettingsUsersImport
+    }
+    '/settings/users/by-user': {
+      id: '/settings/users/by-user'
+      path: '/by-user'
+      fullPath: '/settings/users/by-user'
+      preLoaderRoute: typeof SettingsUsersByUserImport
+      parentRoute: typeof SettingsUsersImport
+    }
+    '/settings/users/invite': {
+      id: '/settings/users/invite'
+      path: '/invite'
+      fullPath: '/settings/users/invite'
+      preLoaderRoute: typeof SettingsUsersInviteImport
+      parentRoute: typeof SettingsUsersImport
+    }
     '/funds/$name/': {
       id: '/funds/$name/'
       path: '/'
@@ -456,10 +668,10 @@ declare module '@tanstack/react-router' {
     }
     '/settings/portfolio-companies/': {
       id: '/settings/portfolio-companies/'
-      path: '/portfolio-companies'
-      fullPath: '/settings/portfolio-companies'
+      path: '/'
+      fullPath: '/settings/portfolio-companies/'
       preLoaderRoute: typeof SettingsPortfolioCompaniesIndexImport
-      parentRoute: typeof SettingsImport
+      parentRoute: typeof SettingsPortfolioCompaniesImport
     }
     '/investments/$name/company-performance/new': {
       id: '/investments/$name/company-performance/new'
@@ -597,12 +809,64 @@ const InvestmentsRouteWithChildren = InvestmentsRoute._addFileChildren(
   InvestmentsRouteChildren,
 )
 
-interface SettingsRouteChildren {
+interface SettingsPortfolioCompaniesRouteChildren {
   SettingsPortfolioCompaniesIndexRoute: typeof SettingsPortfolioCompaniesIndexRoute
 }
 
+const SettingsPortfolioCompaniesRouteChildren: SettingsPortfolioCompaniesRouteChildren =
+  {
+    SettingsPortfolioCompaniesIndexRoute: SettingsPortfolioCompaniesIndexRoute,
+  }
+
+const SettingsPortfolioCompaniesRouteWithChildren =
+  SettingsPortfolioCompaniesRoute._addFileChildren(
+    SettingsPortfolioCompaniesRouteChildren,
+  )
+
+interface SettingsUsersRouteChildren {
+  SettingsUsersByRoleRoute: typeof SettingsUsersByRoleRoute
+  SettingsUsersByUserRoute: typeof SettingsUsersByUserRoute
+  SettingsUsersInviteRoute: typeof SettingsUsersInviteRoute
+}
+
+const SettingsUsersRouteChildren: SettingsUsersRouteChildren = {
+  SettingsUsersByRoleRoute: SettingsUsersByRoleRoute,
+  SettingsUsersByUserRoute: SettingsUsersByUserRoute,
+  SettingsUsersInviteRoute: SettingsUsersInviteRoute,
+}
+
+const SettingsUsersRouteWithChildren = SettingsUsersRoute._addFileChildren(
+  SettingsUsersRouteChildren,
+)
+
+interface SettingsRouteChildren {
+  SettingsAuditLogsRoute: typeof SettingsAuditLogsRoute
+  SettingsBillingRoute: typeof SettingsBillingRoute
+  SettingsFundsRoute: typeof SettingsFundsRoute
+  SettingsInvestmentsRoute: typeof SettingsInvestmentsRoute
+  SettingsLabelsRoute: typeof SettingsLabelsRoute
+  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
+  SettingsPortfolioCompaniesRoute: typeof SettingsPortfolioCompaniesRouteWithChildren
+  SettingsProfileRoute: typeof SettingsProfileRoute
+  SettingsRolesRoute: typeof SettingsRolesRoute
+  SettingsSecurityRoute: typeof SettingsSecurityRoute
+  SettingsThemingRoute: typeof SettingsThemingRoute
+  SettingsUsersRoute: typeof SettingsUsersRouteWithChildren
+}
+
 const SettingsRouteChildren: SettingsRouteChildren = {
-  SettingsPortfolioCompaniesIndexRoute: SettingsPortfolioCompaniesIndexRoute,
+  SettingsAuditLogsRoute: SettingsAuditLogsRoute,
+  SettingsBillingRoute: SettingsBillingRoute,
+  SettingsFundsRoute: SettingsFundsRoute,
+  SettingsInvestmentsRoute: SettingsInvestmentsRoute,
+  SettingsLabelsRoute: SettingsLabelsRoute,
+  SettingsNotificationsRoute: SettingsNotificationsRoute,
+  SettingsPortfolioCompaniesRoute: SettingsPortfolioCompaniesRouteWithChildren,
+  SettingsProfileRoute: SettingsProfileRoute,
+  SettingsRolesRoute: SettingsRolesRoute,
+  SettingsSecurityRoute: SettingsSecurityRoute,
+  SettingsThemingRoute: SettingsThemingRoute,
+  SettingsUsersRoute: SettingsUsersRouteWithChildren,
 }
 
 const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
@@ -620,6 +884,18 @@ export interface FileRoutesByFullPath {
   '/funds/new': typeof FundsNewRoute
   '/investments/$name': typeof InvestmentsNameRouteWithChildren
   '/investments/new': typeof InvestmentsNewRoute
+  '/settings/audit-logs': typeof SettingsAuditLogsRoute
+  '/settings/billing': typeof SettingsBillingRoute
+  '/settings/funds': typeof SettingsFundsRoute
+  '/settings/investments': typeof SettingsInvestmentsRoute
+  '/settings/labels': typeof SettingsLabelsRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
+  '/settings/portfolio-companies': typeof SettingsPortfolioCompaniesRouteWithChildren
+  '/settings/profile': typeof SettingsProfileRoute
+  '/settings/roles': typeof SettingsRolesRoute
+  '/settings/security': typeof SettingsSecurityRoute
+  '/settings/theming': typeof SettingsThemingRoute
+  '/settings/users': typeof SettingsUsersRouteWithChildren
   '/funds/': typeof FundsIndexRoute
   '/investments/': typeof InvestmentsIndexRoute
   '/funds/$name/cash-flow': typeof FundsNameCashFlowRoute
@@ -637,9 +913,12 @@ export interface FileRoutesByFullPath {
   '/investments/$name/shareholders-structure': typeof InvestmentsNameShareholdersStructureRoute
   '/investments/$name/template-config': typeof InvestmentsNameTemplateConfigRoute
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
+  '/settings/users/by-role': typeof SettingsUsersByRoleRoute
+  '/settings/users/by-user': typeof SettingsUsersByUserRoute
+  '/settings/users/invite': typeof SettingsUsersInviteRoute
   '/funds/$name/': typeof FundsNameIndexRoute
   '/investments/$name/': typeof InvestmentsNameIndexRoute
-  '/settings/portfolio-companies': typeof SettingsPortfolioCompaniesIndexRoute
+  '/settings/portfolio-companies/': typeof SettingsPortfolioCompaniesIndexRoute
   '/investments/$name/company-performance/new': typeof InvestmentsNameCompanyPerformanceNewRoute
   '/investments/$name/deal-team-highlights/new': typeof InvestmentsNameDealTeamHighlightsNewRoute
 }
@@ -651,6 +930,17 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRouteWithChildren
   '/funds/new': typeof FundsNewRoute
   '/investments/new': typeof InvestmentsNewRoute
+  '/settings/audit-logs': typeof SettingsAuditLogsRoute
+  '/settings/billing': typeof SettingsBillingRoute
+  '/settings/funds': typeof SettingsFundsRoute
+  '/settings/investments': typeof SettingsInvestmentsRoute
+  '/settings/labels': typeof SettingsLabelsRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
+  '/settings/profile': typeof SettingsProfileRoute
+  '/settings/roles': typeof SettingsRolesRoute
+  '/settings/security': typeof SettingsSecurityRoute
+  '/settings/theming': typeof SettingsThemingRoute
+  '/settings/users': typeof SettingsUsersRouteWithChildren
   '/funds': typeof FundsIndexRoute
   '/investments': typeof InvestmentsIndexRoute
   '/funds/$name/cash-flow': typeof FundsNameCashFlowRoute
@@ -668,6 +958,9 @@ export interface FileRoutesByTo {
   '/investments/$name/shareholders-structure': typeof InvestmentsNameShareholdersStructureRoute
   '/investments/$name/template-config': typeof InvestmentsNameTemplateConfigRoute
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
+  '/settings/users/by-role': typeof SettingsUsersByRoleRoute
+  '/settings/users/by-user': typeof SettingsUsersByUserRoute
+  '/settings/users/invite': typeof SettingsUsersInviteRoute
   '/funds/$name': typeof FundsNameIndexRoute
   '/investments/$name': typeof InvestmentsNameIndexRoute
   '/settings/portfolio-companies': typeof SettingsPortfolioCompaniesIndexRoute
@@ -687,6 +980,18 @@ export interface FileRoutesById {
   '/funds/new': typeof FundsNewRoute
   '/investments/$name': typeof InvestmentsNameRouteWithChildren
   '/investments/new': typeof InvestmentsNewRoute
+  '/settings/audit-logs': typeof SettingsAuditLogsRoute
+  '/settings/billing': typeof SettingsBillingRoute
+  '/settings/funds': typeof SettingsFundsRoute
+  '/settings/investments': typeof SettingsInvestmentsRoute
+  '/settings/labels': typeof SettingsLabelsRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
+  '/settings/portfolio-companies': typeof SettingsPortfolioCompaniesRouteWithChildren
+  '/settings/profile': typeof SettingsProfileRoute
+  '/settings/roles': typeof SettingsRolesRoute
+  '/settings/security': typeof SettingsSecurityRoute
+  '/settings/theming': typeof SettingsThemingRoute
+  '/settings/users': typeof SettingsUsersRouteWithChildren
   '/funds/': typeof FundsIndexRoute
   '/investments/': typeof InvestmentsIndexRoute
   '/funds/$name/cash-flow': typeof FundsNameCashFlowRoute
@@ -704,6 +1009,9 @@ export interface FileRoutesById {
   '/investments/$name/shareholders-structure': typeof InvestmentsNameShareholdersStructureRoute
   '/investments/$name/template-config': typeof InvestmentsNameTemplateConfigRoute
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
+  '/settings/users/by-role': typeof SettingsUsersByRoleRoute
+  '/settings/users/by-user': typeof SettingsUsersByUserRoute
+  '/settings/users/invite': typeof SettingsUsersInviteRoute
   '/funds/$name/': typeof FundsNameIndexRoute
   '/investments/$name/': typeof InvestmentsNameIndexRoute
   '/settings/portfolio-companies/': typeof SettingsPortfolioCompaniesIndexRoute
@@ -724,6 +1032,18 @@ export interface FileRouteTypes {
     | '/funds/new'
     | '/investments/$name'
     | '/investments/new'
+    | '/settings/audit-logs'
+    | '/settings/billing'
+    | '/settings/funds'
+    | '/settings/investments'
+    | '/settings/labels'
+    | '/settings/notifications'
+    | '/settings/portfolio-companies'
+    | '/settings/profile'
+    | '/settings/roles'
+    | '/settings/security'
+    | '/settings/theming'
+    | '/settings/users'
     | '/funds/'
     | '/investments/'
     | '/funds/$name/cash-flow'
@@ -741,9 +1061,12 @@ export interface FileRouteTypes {
     | '/investments/$name/shareholders-structure'
     | '/investments/$name/template-config'
     | '/investments/$name/valuation'
+    | '/settings/users/by-role'
+    | '/settings/users/by-user'
+    | '/settings/users/invite'
     | '/funds/$name/'
     | '/investments/$name/'
-    | '/settings/portfolio-companies'
+    | '/settings/portfolio-companies/'
     | '/investments/$name/company-performance/new'
     | '/investments/$name/deal-team-highlights/new'
   fileRoutesByTo: FileRoutesByTo
@@ -754,6 +1077,17 @@ export interface FileRouteTypes {
     | '/settings'
     | '/funds/new'
     | '/investments/new'
+    | '/settings/audit-logs'
+    | '/settings/billing'
+    | '/settings/funds'
+    | '/settings/investments'
+    | '/settings/labels'
+    | '/settings/notifications'
+    | '/settings/profile'
+    | '/settings/roles'
+    | '/settings/security'
+    | '/settings/theming'
+    | '/settings/users'
     | '/funds'
     | '/investments'
     | '/funds/$name/cash-flow'
@@ -771,6 +1105,9 @@ export interface FileRouteTypes {
     | '/investments/$name/shareholders-structure'
     | '/investments/$name/template-config'
     | '/investments/$name/valuation'
+    | '/settings/users/by-role'
+    | '/settings/users/by-user'
+    | '/settings/users/invite'
     | '/funds/$name'
     | '/investments/$name'
     | '/settings/portfolio-companies'
@@ -788,6 +1125,18 @@ export interface FileRouteTypes {
     | '/funds/new'
     | '/investments/$name'
     | '/investments/new'
+    | '/settings/audit-logs'
+    | '/settings/billing'
+    | '/settings/funds'
+    | '/settings/investments'
+    | '/settings/labels'
+    | '/settings/notifications'
+    | '/settings/portfolio-companies'
+    | '/settings/profile'
+    | '/settings/roles'
+    | '/settings/security'
+    | '/settings/theming'
+    | '/settings/users'
     | '/funds/'
     | '/investments/'
     | '/funds/$name/cash-flow'
@@ -805,6 +1154,9 @@ export interface FileRouteTypes {
     | '/investments/$name/shareholders-structure'
     | '/investments/$name/template-config'
     | '/investments/$name/valuation'
+    | '/settings/users/by-role'
+    | '/settings/users/by-user'
+    | '/settings/users/invite'
     | '/funds/$name/'
     | '/investments/$name/'
     | '/settings/portfolio-companies/'
@@ -877,7 +1229,18 @@ export const routeTree = rootRoute
     "/settings": {
       "filePath": "settings.tsx",
       "children": [
-        "/settings/portfolio-companies/"
+        "/settings/audit-logs",
+        "/settings/billing",
+        "/settings/funds",
+        "/settings/investments",
+        "/settings/labels",
+        "/settings/notifications",
+        "/settings/portfolio-companies",
+        "/settings/profile",
+        "/settings/roles",
+        "/settings/security",
+        "/settings/theming",
+        "/settings/users"
       ]
     },
     "/funds/$name": {
@@ -916,6 +1279,62 @@ export const routeTree = rootRoute
     "/investments/new": {
       "filePath": "investments/new.tsx",
       "parent": "/investments"
+    },
+    "/settings/audit-logs": {
+      "filePath": "settings/audit-logs.tsx",
+      "parent": "/settings"
+    },
+    "/settings/billing": {
+      "filePath": "settings/billing.tsx",
+      "parent": "/settings"
+    },
+    "/settings/funds": {
+      "filePath": "settings/funds.tsx",
+      "parent": "/settings"
+    },
+    "/settings/investments": {
+      "filePath": "settings/investments.tsx",
+      "parent": "/settings"
+    },
+    "/settings/labels": {
+      "filePath": "settings/labels.tsx",
+      "parent": "/settings"
+    },
+    "/settings/notifications": {
+      "filePath": "settings/notifications.tsx",
+      "parent": "/settings"
+    },
+    "/settings/portfolio-companies": {
+      "filePath": "settings/portfolio-companies.tsx",
+      "parent": "/settings",
+      "children": [
+        "/settings/portfolio-companies/"
+      ]
+    },
+    "/settings/profile": {
+      "filePath": "settings/profile.tsx",
+      "parent": "/settings"
+    },
+    "/settings/roles": {
+      "filePath": "settings/roles.tsx",
+      "parent": "/settings"
+    },
+    "/settings/security": {
+      "filePath": "settings/security.tsx",
+      "parent": "/settings"
+    },
+    "/settings/theming": {
+      "filePath": "settings/theming.tsx",
+      "parent": "/settings"
+    },
+    "/settings/users": {
+      "filePath": "settings/users.tsx",
+      "parent": "/settings",
+      "children": [
+        "/settings/users/by-role",
+        "/settings/users/by-user",
+        "/settings/users/invite"
+      ]
     },
     "/funds/": {
       "filePath": "funds/index.tsx",
@@ -991,6 +1410,18 @@ export const routeTree = rootRoute
       "filePath": "investments/$name/valuation.tsx",
       "parent": "/investments/$name"
     },
+    "/settings/users/by-role": {
+      "filePath": "settings/users/by-role.tsx",
+      "parent": "/settings/users"
+    },
+    "/settings/users/by-user": {
+      "filePath": "settings/users/by-user.tsx",
+      "parent": "/settings/users"
+    },
+    "/settings/users/invite": {
+      "filePath": "settings/users/invite.tsx",
+      "parent": "/settings/users"
+    },
     "/funds/$name/": {
       "filePath": "funds/$name/index.tsx",
       "parent": "/funds/$name"
@@ -1001,7 +1432,7 @@ export const routeTree = rootRoute
     },
     "/settings/portfolio-companies/": {
       "filePath": "settings/portfolio-companies/index.tsx",
-      "parent": "/settings"
+      "parent": "/settings/portfolio-companies"
     },
     "/investments/$name/company-performance/new": {
       "filePath": "investments/$name/company-performance/new.tsx",

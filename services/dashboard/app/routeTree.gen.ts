@@ -23,6 +23,7 @@ import { Route as InvestmentsNewImport } from './routes/investments/new'
 import { Route as InvestmentsNameImport } from './routes/investments/$name'
 import { Route as FundsNewImport } from './routes/funds/new'
 import { Route as FundsNameImport } from './routes/funds/$name'
+import { Route as SettingsPortfolioCompaniesIndexImport } from './routes/settings/portfolio-companies/index'
 import { Route as InvestmentsNameIndexImport } from './routes/investments/$name/index'
 import { Route as FundsNameIndexImport } from './routes/funds/$name/index'
 import { Route as InvestmentsNameValuationImport } from './routes/investments/$name/valuation'
@@ -116,6 +117,13 @@ const FundsNameRoute = FundsNameImport.update({
   path: '/$name',
   getParentRoute: () => FundsRoute,
 } as any)
+
+const SettingsPortfolioCompaniesIndexRoute =
+  SettingsPortfolioCompaniesIndexImport.update({
+    id: '/portfolio-companies/',
+    path: '/portfolio-companies/',
+    getParentRoute: () => SettingsRoute,
+  } as any)
 
 const InvestmentsNameIndexRoute = InvestmentsNameIndexImport.update({
   id: '/',
@@ -446,6 +454,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvestmentsNameIndexImport
       parentRoute: typeof InvestmentsNameImport
     }
+    '/settings/portfolio-companies/': {
+      id: '/settings/portfolio-companies/'
+      path: '/portfolio-companies'
+      fullPath: '/settings/portfolio-companies'
+      preLoaderRoute: typeof SettingsPortfolioCompaniesIndexImport
+      parentRoute: typeof SettingsImport
+    }
     '/investments/$name/company-performance/new': {
       id: '/investments/$name/company-performance/new'
       path: '/new'
@@ -582,13 +597,25 @@ const InvestmentsRouteWithChildren = InvestmentsRoute._addFileChildren(
   InvestmentsRouteChildren,
 )
 
+interface SettingsRouteChildren {
+  SettingsPortfolioCompaniesIndexRoute: typeof SettingsPortfolioCompaniesIndexRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsPortfolioCompaniesIndexRoute: SettingsPortfolioCompaniesIndexRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/funds': typeof FundsRouteWithChildren
   '/investments': typeof InvestmentsRouteWithChildren
   '/mobile': typeof MobileRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/funds/$name': typeof FundsNameRouteWithChildren
   '/funds/new': typeof FundsNewRoute
   '/investments/$name': typeof InvestmentsNameRouteWithChildren
@@ -612,6 +639,7 @@ export interface FileRoutesByFullPath {
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
   '/funds/$name/': typeof FundsNameIndexRoute
   '/investments/$name/': typeof InvestmentsNameIndexRoute
+  '/settings/portfolio-companies': typeof SettingsPortfolioCompaniesIndexRoute
   '/investments/$name/company-performance/new': typeof InvestmentsNameCompanyPerformanceNewRoute
   '/investments/$name/deal-team-highlights/new': typeof InvestmentsNameDealTeamHighlightsNewRoute
 }
@@ -620,7 +648,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
   '/mobile': typeof MobileRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/funds/new': typeof FundsNewRoute
   '/investments/new': typeof InvestmentsNewRoute
   '/funds': typeof FundsIndexRoute
@@ -642,6 +670,7 @@ export interface FileRoutesByTo {
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
   '/funds/$name': typeof FundsNameIndexRoute
   '/investments/$name': typeof InvestmentsNameIndexRoute
+  '/settings/portfolio-companies': typeof SettingsPortfolioCompaniesIndexRoute
   '/investments/$name/company-performance/new': typeof InvestmentsNameCompanyPerformanceNewRoute
   '/investments/$name/deal-team-highlights/new': typeof InvestmentsNameDealTeamHighlightsNewRoute
 }
@@ -653,7 +682,7 @@ export interface FileRoutesById {
   '/funds': typeof FundsRouteWithChildren
   '/investments': typeof InvestmentsRouteWithChildren
   '/mobile': typeof MobileRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/funds/$name': typeof FundsNameRouteWithChildren
   '/funds/new': typeof FundsNewRoute
   '/investments/$name': typeof InvestmentsNameRouteWithChildren
@@ -677,6 +706,7 @@ export interface FileRoutesById {
   '/investments/$name/valuation': typeof InvestmentsNameValuationRoute
   '/funds/$name/': typeof FundsNameIndexRoute
   '/investments/$name/': typeof InvestmentsNameIndexRoute
+  '/settings/portfolio-companies/': typeof SettingsPortfolioCompaniesIndexRoute
   '/investments/$name/company-performance/new': typeof InvestmentsNameCompanyPerformanceNewRoute
   '/investments/$name/deal-team-highlights/new': typeof InvestmentsNameDealTeamHighlightsNewRoute
 }
@@ -713,6 +743,7 @@ export interface FileRouteTypes {
     | '/investments/$name/valuation'
     | '/funds/$name/'
     | '/investments/$name/'
+    | '/settings/portfolio-companies'
     | '/investments/$name/company-performance/new'
     | '/investments/$name/deal-team-highlights/new'
   fileRoutesByTo: FileRoutesByTo
@@ -742,6 +773,7 @@ export interface FileRouteTypes {
     | '/investments/$name/valuation'
     | '/funds/$name'
     | '/investments/$name'
+    | '/settings/portfolio-companies'
     | '/investments/$name/company-performance/new'
     | '/investments/$name/deal-team-highlights/new'
   id:
@@ -775,6 +807,7 @@ export interface FileRouteTypes {
     | '/investments/$name/valuation'
     | '/funds/$name/'
     | '/investments/$name/'
+    | '/settings/portfolio-companies/'
     | '/investments/$name/company-performance/new'
     | '/investments/$name/deal-team-highlights/new'
   fileRoutesById: FileRoutesById
@@ -786,7 +819,7 @@ export interface RootRouteChildren {
   FundsRoute: typeof FundsRouteWithChildren
   InvestmentsRoute: typeof InvestmentsRouteWithChildren
   MobileRoute: typeof MobileRoute
-  SettingsRoute: typeof SettingsRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -795,7 +828,7 @@ const rootRouteChildren: RootRouteChildren = {
   FundsRoute: FundsRouteWithChildren,
   InvestmentsRoute: InvestmentsRouteWithChildren,
   MobileRoute: MobileRoute,
-  SettingsRoute: SettingsRoute,
+  SettingsRoute: SettingsRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -842,7 +875,10 @@ export const routeTree = rootRoute
       "filePath": "mobile.tsx"
     },
     "/settings": {
-      "filePath": "settings.tsx"
+      "filePath": "settings.tsx",
+      "children": [
+        "/settings/portfolio-companies/"
+      ]
     },
     "/funds/$name": {
       "filePath": "funds/$name.tsx",
@@ -962,6 +998,10 @@ export const routeTree = rootRoute
     "/investments/$name/": {
       "filePath": "investments/$name/index.tsx",
       "parent": "/investments/$name"
+    },
+    "/settings/portfolio-companies/": {
+      "filePath": "settings/portfolio-companies/index.tsx",
+      "parent": "/settings"
     },
     "/investments/$name/company-performance/new": {
       "filePath": "investments/$name/company-performance/new.tsx",

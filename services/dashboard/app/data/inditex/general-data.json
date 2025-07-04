@@ -1,0 +1,470 @@
+{
+  "investment-summary": {
+    "foundedYear": 1985,
+    "companyName": "Industria de Diseño Textil, S.A. (Inditex)",
+    "country": "Spain",
+    "industry": "Apparel & Fashion Retail",
+    "address": "Av. de la Diputación, Edificio Inditex, 15143 Arteixo (A Coruña), Spain",
+    "ownershipPercentage": "57.0%",
+    "coInvestors": "Pontegadea Inversiones, Capital Group",
+    "executives": {
+      "CEO": "Óscar García Maceiras",
+      "CFO": "Ignacio Fernández"
+    },
+    "boardMembers": [
+      "Marta Ortega Pérez (Chairwoman)",
+      "Óscar García Maceiras (CEO)",
+      "José Arnau Sierra (Vice-Chair)",
+      "Denise Kingsmill (Independent)",
+      "Rodrigo Echenique Gordillo (Independent)"
+    ],
+    "dealTeam": ["Mónica Gómez Acebo", "Carlos Álvarez"],
+    "acquisitionDate": "2024-04-15",
+    "realizationDate": null,
+    "entryValuation": {
+      "equityValue": "€30 000 M",
+      "netDebt": "€2 000 M",
+      "enterpriseValue": "€32 000 M"
+    },
+    "latestValuation": {
+      "equityValue": "€60 000 M",
+      "netDebt": "€1 500 M",
+      "enterpriseValue": "€61 500 M"
+    },
+    "committedCapital": "€16 000 M",
+    "investedCapital": "€11 200 M",
+    "realizedInvestment": "€7 000 M",
+    "unrealizedInvestment": "€4 200 M",
+    "grossIRR": "21.4%",
+    "grossInvestmentMultiple": "2.9x",
+    "netIRR": "16.2%",
+    "netInvestmentMultiple": "2.2x",
+    "companyDescription": "Inditex is one of the world’s largest fashion retailers, operating eight global brands—including Zara, Pull&Bear and Massimo Dutti—across more than 200 markets through a fully integrated store-and-online model."
+  },
+  "dashboard": {
+    "name": "inditex",
+    "netDebt": {
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      "values": [1800000, 1725000, 1650000, 1575000, 1500000, 1425000]
+    },
+    "revenue": {
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      "actual": [2900000, 3100000, 3350000, 3280000, 3520000, 3780000],
+      "budget": [2850000, 3050000, 3250000, 3300000, 3450000, 3700000]
+    },
+    "capexInvested": {
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      "values": [420000, 410000, 460000, 490000, 475000, 500000]
+    },
+    "operatingChargesByGeography": {
+      "labels": ["Europe", "Americas", "Asia-Pacific", "Other"],
+      "values": [47, 28, 20, 5]
+    }
+  },
+  "valuation": [
+    {
+      "id": "capital-committed",
+      "name": "Capital committed",
+      "units": "EUR million",
+      "values": {
+        "Q2 2024": 3200,
+        "Q3 2024": 3300,
+        "Q4 2024": 3350,
+        "Q1 2025": 3400,
+        "Previous quarter": 3350,
+        "Previous year": 3000
+      }
+    },
+    {
+      "id": "invested-capital",
+      "name": "Invested capital",
+      "units": "EUR million",
+      "values": {
+        "Q2 2024": 2400,
+        "Q3 2024": 2475,
+        "Q4 2024": 2525,
+        "Q1 2025": 2575,
+        "Previous quarter": 2525,
+        "Previous year": 2250
+      }
+    },
+    {
+      "id": "realized-investment",
+      "name": "Realized investment",
+      "units": "EUR million",
+      "values": {
+        "Q2 2024": 1400,
+        "Q3 2024": 1450,
+        "Q4 2024": 1500,
+        "Q1 2025": 1550,
+        "Previous quarter": 1500,
+        "Previous year": 1350
+      }
+    },
+    {
+      "id": "unrealized-investment",
+      "name": "Unrealized investment",
+      "units": "EUR million",
+      "values": {
+        "Q2 2024": 1000,
+        "Q3 2024": 1025,
+        "Q4 2024": 1025,
+        "Q1 2025": 1025,
+        "Previous quarter": 1025,
+        "Previous year": 900
+      }
+    },
+    {
+      "id": "gross-irr",
+      "name": "Gross IRR",
+      "units": "%",
+      "values": {
+        "Q2 2024": "20.8%",
+        "Q3 2024": "21.0%",
+        "Q4 2024": "21.2%",
+        "Q1 2025": "21.4%",
+        "Previous quarter": "21.2%",
+        "Previous year": "19.8%"
+      }
+    },
+    {
+      "id": "net-irr",
+      "name": "Net IRR",
+      "units": "%",
+      "values": {
+        "Q2 2024": "15.7%",
+        "Q3 2024": "15.9%",
+        "Q4 2024": "16.0%",
+        "Q1 2025": "16.2%",
+        "Previous quarter": "16.0%",
+        "Previous year": "15.1%"
+      }
+    },
+    {
+      "id": "gross-money-multiple",
+      "name": "Gross money multiple",
+      "units": "x",
+      "values": {
+        "Q2 2024": "2.6x",
+        "Q3 2024": "2.7x",
+        "Q4 2024": "2.8x",
+        "Q1 2025": "2.9x",
+        "Previous quarter": "2.8x",
+        "Previous year": "2.7x"
+      }
+    },
+    {
+      "id": "net-money-multiple",
+      "name": "Net money multiple",
+      "units": "x",
+      "values": {
+        "Q2 2024": "2.0x",
+        "Q3 2024": "2.1x",
+        "Q4 2024": "2.1x",
+        "Q1 2025": "2.2x",
+        "Previous quarter": "2.1x",
+        "Previous year": "2.1x"
+      }
+    }
+  ],
+  "shareholders-structure": {
+    "headers": [
+      {
+        "id": "shareholder",
+        "label": "Shareholder"
+      },
+      {
+        "id": "indirectOwner",
+        "label": "Indirect Owner"
+      },
+      {
+        "id": "year",
+        "label": "Year of Acquisition"
+      },
+      {
+        "id": "ownership",
+        "label": "% Ownership"
+      },
+      {
+        "id": "actions",
+        "label": "Actions"
+      }
+    ],
+    "rows": [
+      {
+        "id": "row-1",
+        "shareholder": "Pontegadea Inversiones, S.L.",
+        "indirectOwner": "Amancio Ortega Gaona",
+        "year": 2001,
+        "ownership": "50.01%"
+      },
+      {
+        "id": "row-2",
+        "shareholder": "Partler Participaciones, S.L.",
+        "indirectOwner": "Amancio Ortega Gaona",
+        "year": 2001,
+        "ownership": "9.64%"
+      },
+      {
+        "id": "row-3",
+        "shareholder": "BlackRock, Inc.",
+        "indirectOwner": "Institutional Investors",
+        "year": 2018,
+        "ownership": "5.20%"
+      }
+    ]
+  },
+  "deal-team-highlights": [
+    {
+      "title": "Call with new CEO",
+      "date": "2025-01-08T09:30:00Z",
+      "content": "CEO Óscar García Maceiras confirmed 12 % YoY online growth and discussed further automation of Arteixo logistics hub.",
+      "author": "Mónica Gómez Acebo",
+      "labels": [
+        {
+          "id": 3,
+          "name": "Performance",
+          "color": "grey"
+        }
+      ]
+    },
+    {
+      "title": "RFID roll-out milestone",
+      "date": "2024-11-12T14:00:00Z",
+      "content": "All Zara stores in LATAM completed RFID installation, reducing inventory discrepancies by 18 %.",
+      "author": "Carlos Álvarez",
+      "labels": [
+        {
+          "id": 2,
+          "name": "Strategy",
+          "color": "blue"
+        },
+        {
+          "id": 3,
+          "name": "Other",
+          "color": "grey"
+        }
+      ]
+    },
+    {
+      "title": "Circularity initiative workshop",
+      "date": "2024-09-18T10:00:00Z",
+      "content": "Team met with Recover Textile to explore fiber-to-fiber recycling partnership.",
+      "author": "Mónica Gómez Acebo",
+      "labels": [
+        {
+          "id": 3,
+          "name": "Other",
+          "color": "grey"
+        }
+      ]
+    },
+    {
+      "title": "RCF refinancing mandate",
+      "date": "2024-07-22T13:30:00Z",
+      "content": "Mandated BBVA & Santander to arrange €900 M sustainability-linked revolving credit facility.",
+      "author": "Carlos Álvarez",
+      "labels": [
+        {
+          "id": 4,
+          "name": "Exit Strategy",
+          "color": "yellow"
+        }
+      ]
+    }
+  ],
+  "reports": {
+    "headers": [
+      {
+        "id": "name",
+        "label": "Name"
+      },
+      {
+        "id": "owner",
+        "label": "Owner"
+      },
+      {
+        "id": "modified",
+        "label": "Last modified"
+      },
+      {
+        "id": "actions",
+        "label": "Actions"
+      }
+    ],
+    "rows": [
+      {
+        "id": "q1-2025",
+        "name": "Q1 2025",
+        "owner": "Inditex IR",
+        "modified": "2025-04-03",
+        "children": [
+          {
+            "id": "q1-2025-quarterly",
+            "title": "Inditex – Quarterly Report 31 Mar 25"
+          },
+          {
+            "id": "q1-2025-monthly",
+            "title": "Inditex – Monthly Report 31 Mar 25"
+          }
+        ]
+      },
+      {
+        "id": "fy-2024",
+        "name": "FY 2024",
+        "owner": "Inditex IR",
+        "modified": "2024-11-14"
+      },
+      {
+        "id": "q4-2024",
+        "name": "Q4 2024",
+        "owner": "Inditex IR",
+        "modified": "2024-05-19"
+      },
+      {
+        "id": "q3-2024",
+        "name": "Q3 2024",
+        "owner": "Inditex IR",
+        "modified": "2024-04-21"
+      },
+      {
+        "id": "q2-2024",
+        "name": "Q2 2024",
+        "owner": "Inditex IR",
+        "modified": "2024-03-10"
+      },
+      {
+        "id": "q1-2024",
+        "name": "Q1 2024",
+        "owner": "Inditex IR",
+        "modified": "2024-03-10"
+      },
+      {
+        "id": "fy-2023",
+        "name": "FY 2023",
+        "owner": "Inditex IR",
+        "modified": "2024-03-10"
+      }
+    ]
+  },
+  "documents": {
+    "headers": [
+      {
+        "id": "name",
+        "label": "Name"
+      },
+      {
+        "id": "owner",
+        "label": "Owner"
+      },
+      {
+        "id": "modified",
+        "label": "Last modified"
+      },
+      {
+        "id": "actions",
+        "label": "Actions"
+      }
+    ],
+    "rows": [
+      {
+        "id": "board-meeting",
+        "name": "Board Meeting Packs",
+        "owner": "Inditex Legal",
+        "modified": "2025-04-03"
+      },
+      {
+        "id": "transaction-dd",
+        "name": "Supply-Chain DD Reports",
+        "owner": "Inditex Legal",
+        "modified": "2024-11-14"
+      },
+      {
+        "id": "debt-docs",
+        "name": "Debt Facilities",
+        "owner": "Inditex Treasury",
+        "modified": "2024-05-19"
+      },
+      {
+        "id": "legal-docs",
+        "name": "Corporate Governance Docs",
+        "owner": "Inditex Legal",
+        "modified": "2024-04-21"
+      },
+      {
+        "id": "broker-reports",
+        "name": "Broker Research",
+        "owner": "Inditex IR",
+        "modified": "2024-03-10"
+      }
+    ]
+  },
+  "data-collection": {
+    "headers": [
+      {
+        "id": "name",
+        "label": "Name"
+      },
+      {
+        "id": "file",
+        "label": "File name"
+      },
+      {
+        "id": "submittedBy",
+        "label": "Submitted by"
+      },
+      {
+        "id": "submittedAt",
+        "label": "Last submission date"
+      },
+      {
+        "id": "actions",
+        "label": "Actions"
+      }
+    ],
+    "rows": [
+      {
+        "id": "row-1",
+        "name": "Inditex – Financial & operational info 31 Mar 2025",
+        "file": "Inditex_External_Reporting_Mar25.xls",
+        "submittedBy": "Mariana López Briales",
+        "submittedAt": "2025-04-02T22:30:00"
+      },
+      {
+        "id": "row-2",
+        "name": "Inditex – Quarterly Valuation 31 Mar 2025",
+        "file": "Inditex_Valuation_Mar25.xls",
+        "submittedBy": "Mariana López Briales",
+        "submittedAt": "2025-04-15T08:30:00"
+      },
+      {
+        "id": "row-3",
+        "name": "Inditex – Financial & operational info 28 Feb 2025",
+        "file": "Inditex_External_Reporting_Feb25.xls",
+        "submittedBy": "Mónica Gómez Acebo",
+        "submittedAt": "2025-03-08T15:45:00"
+      },
+      {
+        "id": "row-4",
+        "name": "Inditex – Financial & operational info 31 Jan 2025",
+        "file": "Inditex_External_Reporting_Jan25.xls",
+        "submittedBy": "Mónica Gómez Acebo",
+        "submittedAt": "2025-02-08T15:30:00"
+      },
+      {
+        "id": "row-5",
+        "name": "Inditex – Quarterly Valuation 31 Dec 2024",
+        "file": "Inditex_Valuation_Dec24.xls",
+        "submittedBy": "Mariana López Briales",
+        "submittedAt": "2025-02-02T12:30:00"
+      },
+      {
+        "id": "row-6",
+        "name": "Inditex – Financial & operational info 31 Dec 2024",
+        "file": "Inditex_External_Reporting_Dec24.xls",
+        "submittedBy": "Mónica Gómez Acebo",
+        "submittedAt": "2025-01-15T11:25:00"
+      }
+    ]
+  }
+}

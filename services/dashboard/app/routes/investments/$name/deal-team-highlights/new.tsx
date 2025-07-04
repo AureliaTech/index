@@ -13,14 +13,24 @@ const getLabels = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 const addComment = createServerFn({ method: "POST" })
-  .validator((c: Comment) => c)
-  .handler(async (ctx) => {
-    const file = "app/data/comments.json";
-    const comments: Comment[] = JSON.parse(await fs.readFile(file, "utf8"));
-    const data = ctx.data;
-    const updated = [data, ...comments];
+  .validator((payload: { company: string; comment: Comment }) => payload)
+  .handler(async ({ data: { company, comment } }) => {
+    const file = `app/data/${company}/general-data.json`;
 
-    await fs.writeFile(file, JSON.stringify(updated, null, 2));
+    let json: Record<string, unknown> = {};
+    try {
+      json = JSON.parse(await fs.readFile(file, "utf8"));
+    } catch {
+      json = {};
+    }
+
+    const highlights: Comment[] = Array.isArray(json["deal-team-highlights"])
+      ? (json["deal-team-highlights"] as Comment[])
+      : [];
+
+    json["deal-team-highlights"] = [comment, ...highlights];
+
+    await fs.writeFile(file, JSON.stringify(json, null, 2));
 
     return { success: true };
   });
@@ -38,6 +48,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { labels } = Route.useLoaderData();
   const navigate = Route.useNavigate();
+  const { name } = Route.useParams();
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,7 +66,7 @@ function RouteComponent() {
       labels: labels.filter((l) => selectedIds.includes(l.id)),
     };
     try {
-      await addComment({ data: newComment });
+      await addComment({ data: { company: name, comment: newComment } });
 
       navigate({ to: ".." });
     } catch (error) {

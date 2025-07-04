@@ -5,6 +5,7 @@ export const Route = createFileRoute('/investments/$name')({
   beforeLoad: ({ params, search }) => {
     return {
       breadcrumb: params.name,
+      favoriteKey: params.name,
       tabs: [
         {
           label: "Investment Summary",

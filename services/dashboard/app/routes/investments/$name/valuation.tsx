@@ -1,8 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { ArrowDownToLine, ArrowUpToLine, Check } from "lucide-react";
+import * as fs from "node:fs/promises";
+
+const getValuationData = createServerFn({ method: "GET" })
+  .validator((d: { name: string }) => d)
+  .handler(async ({ data: { name } }) => {
+    const filePath = `app/data/${name}/general-data.json`;
+    try {
+      const raw = await fs.readFile(filePath, "utf8");
+      const valuation = JSON.parse(raw)["valuation"];
+      return { valuation };
+    } catch (error) {
+      return {
+        error: "No data found",
+      };
+    }
+  });
 
 export const Route = createFileRoute("/investments/$name/valuation")({
   component: RouteComponent,
+  loader: async ({ params }) => {
+    return await getValuationData({ data: { name: params.name } });
+  },
 });
 
 const headers = [
@@ -23,114 +43,14 @@ interface MetricRow {
   values: Record<Header, string | number>;
 }
 
-const metrics: MetricRow[] = [
-  {
-    id: "capital-committed",
-    name: "Capital committed",
-    units: "EUR million",
-    values: {
-      "Q2 2024": 100,
-      "Q3 2024": 100,
-      "Q4 2024": 100,
-      "Q1 2025": 100,
-      "Previous quarter": "-",
-      "Previous year": "-",
-    },
-  },
-  {
-    id: "invested-capital",
-    name: "Invested capital",
-    units: "EUR million",
-    values: {
-      "Q2 2024": 50,
-      "Q3 2024": 50,
-      "Q4 2024": 50,
-      "Q1 2025": 75,
-      "Previous quarter": 25,
-      "Previous year": 25,
-    },
-  },
-  {
-    id: "realized-investment",
-    name: "Realized investment",
-    units: "EUR million",
-    values: {
-      "Q2 2024": "-",
-      "Q3 2024": "-",
-      "Q4 2024": "-",
-      "Q1 2025": "-",
-      "Previous quarter": "-",
-      "Previous year": "-",
-    },
-  },
-  {
-    id: "unrealized-investment",
-    name: "Unrealized investment",
-    units: "EUR million",
-    values: {
-      "Q2 2024": 50,
-      "Q3 2024": 50,
-      "Q4 2024": 50,
-      "Q1 2025": 75,
-      "Previous quarter": 25,
-      "Previous year": 25,
-    },
-  },
-  {
-    id: "gross-irr",
-    name: "Gross IRR",
-    units: "%",
-    values: {
-      "Q2 2024": "32.0%",
-      "Q3 2024": "31.0%",
-      "Q4 2024": "30.0%",
-      "Q1 2025": "33.0%",
-      "Previous quarter": "3.0%",
-      "Previous year": "1.0%",
-    },
-  },
-  {
-    id: "net-irr",
-    name: "Net IRR",
-    units: "%",
-    values: {
-      "Q2 2024": "29.0%",
-      "Q3 2024": "28.0%",
-      "Q4 2024": "27.0%",
-      "Q1 2025": "30.0%",
-      "Previous quarter": "3.0%",
-      "Previous year": "1.0%",
-    },
-  },
-  {
-    id: "gross-money-multiple",
-    name: "Gross money multiple",
-    units: "x",
-    values: {
-      "Q2 2024": "5.0x",
-      "Q3 2024": "4.5x",
-      "Q4 2024": "4.0x",
-      "Q1 2025": "5.5x",
-      "Previous quarter": "1.5x",
-      "Previous year": "0.5x",
-    },
-  },
-  {
-    id: "net-money-multiple",
-    name: "Net money multiple",
-    units: "x",
-    values: {
-      "Q2 2024": "4.3x",
-      "Q3 2024": "3.8x",
-      "Q4 2024": "3.3x",
-      "Q1 2025": "4.8x",
-      "Previous quarter": "1.5x",
-      "Previous year": "0.5x",
-    },
-  },
-];
 
 function RouteComponent() {
+  const { valuation, error } = Route.useLoaderData();
+
+  if (error) {
+    return <div>Error loading valuation data</div>;
+  }
+
   return (
     <div className="relative flex-1 p-4">
       <div className="flex justify-end mb-4 gap-2">
@@ -195,7 +115,7 @@ function RouteComponent() {
 
           {/* DATA ROWS */}
           <tbody>
-            {metrics.map((row) => (
+            {valuation.map((row: MetricRow) => (
               <tr key={row.id}>
                 <td className="sticky left-0 z-20 w-40 bg-neutral-50 dark:bg-neutral-900 py-3 px-4 text-left whitespace-nowrap border-b border-neutral-200 dark:border-neutral-700">
                   {row.name}

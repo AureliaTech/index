@@ -64,7 +64,7 @@ LEFT JOIN (
 WHERE f.slug = $1`;
 
 export interface GetFundBySlugWithFavoriteDataArgs {
-    userId: string;
+    userId: number;
 }
 
 export interface GetFundBySlugWithFavoriteDataRow {

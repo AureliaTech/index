@@ -11,7 +11,7 @@ begin
     unique_slug := base_slug;
 
     -- Check for existing slugs and ensure uniqueness
-    while exists (select 1 from companies where slug = unique_slug and id != new.id)
+    while exists (select 1 from company where slug = unique_slug and id != new.id)
         loop
             sequence_num := sequence_num + 1;
             unique_slug := base_slug || '-' || sequence_num;

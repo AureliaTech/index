@@ -25,7 +25,7 @@ WHERE uf.user_id = $1 AND uf.favorite_type = 'company'
 ORDER BY name`;
 
 export interface GetUserFavoritesOrderedByNameArgs {
-    userId: string;
+    userId: number;
 }
 
 export interface GetUserFavoritesOrderedByNameRow {

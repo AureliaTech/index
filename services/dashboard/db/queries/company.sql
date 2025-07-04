@@ -1,9 +1,9 @@
 
 -- name: GetCompanies :many
-SELECT slug, name FROM company ORDER BY name;
+SELECT slug, name, id FROM company ORDER BY name;
 
 -- name: GetCompanyBySlug :one
-SELECT slug, name FROM company WHERE slug = $1;
+SELECT slug, name, id FROM company WHERE slug = $1;
 
 -- name: GetCompanyBySlugWithFavoriteData :one
 SELECT slug, name, is_favorite FROM company c

@@ -4,24 +4,31 @@ import { Outlet, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import * as fs from "node:fs/promises";
 
-const getComments = createServerFn({ method: "GET" }).handler(async () => {
-  const comments = await JSON.parse(
-    await fs.readFile("app/data/comments.json", "utf8")
-  );
-  const logs: LogEntry[] = comments.map((comment, idx) => ({
-    id: `log${idx}`,
-    title: comment.title,
-    description: comment.content,
-    tags: comment.labels.map((l) => ({
-      label: l.name,
-      color: l.color === "grey" ? "gray" : l.color,
-    })),
-    author: comment.author,
-    date: comment.date,
-  }));
-  
-  return logs;
-});
+const getDealTeamHighlightsData = createServerFn({ method: "GET" })
+  .validator((d: { name: string }) => d)
+  .handler(async ({ data: { name } }) => {
+    const filePath = `app/data/${name}/general-data.json`;
+    try {
+      const raw = await fs.readFile(filePath, "utf8");
+      const dealTeamHighlights = JSON.parse(raw)["deal-team-highlights"];
+
+      const logs: LogEntry[] = dealTeamHighlights.map((log, idx) => ({
+        id: `log${idx}`,
+        title: log.title,
+        description: log.content,
+        tags: log.labels.map((l) => ({
+          label: l.name,
+          color: l.color === "grey" ? "gray" : l.color,
+        })),
+        author: log.author,
+        date: log.date,
+      }));
+
+      return { logs };
+    } catch (error) {
+      return { logs: [], error: "No data found" };
+    }
+  });
 
 export type CommentLabel = {
   id: number;
@@ -71,15 +78,19 @@ function TagBadge({ tag }: { tag: LogTag }) {
 
 export const Route = createFileRoute("/investments/$name/deal-team-highlights")(
   {
-    loader: async (): Promise<LogEntry[]> => {
-      return await getComments();
+    loader: async ({ params }) => {
+      return await getDealTeamHighlightsData({ data: { name: params.name } });
     },
     component: RouteComponent,
   }
 );
 
 function RouteComponent() {
-  const logs = Route.useLoaderData();
+  const { logs, error } = Route.useLoaderData();
+
+  if (error) {
+    return <div>Error loading deal team highlights data</div>;
+  }
 
   const { name } = Route.useParams();
 
@@ -131,7 +142,7 @@ function RouteComponent() {
 
       {/* Logs list */}
       <div className="space-y-6">
-        {logs.map((log) => (
+        {logs.map((log: LogEntry) => (
           <div
             key={log.id}
             className="rounded-lg border border-neutral-200 dark:border-neutral-700 p-4"
@@ -143,7 +154,7 @@ function RouteComponent() {
                   {log.title}
                 </h3>
                 {/* tags inline */}
-                {log.tags.map((t) => (
+                {log.tags.map((t: LogTag) => (
                   <TagBadge key={t.label} tag={t} />
                 ))}
               </div>

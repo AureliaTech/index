@@ -12,7 +12,7 @@ export interface GetUserByUsernameArgs {
 }
 
 export interface GetUserByUsernameRow {
-    id: string;
+    id: number;
     username: string;
 }
 
@@ -40,7 +40,7 @@ export interface CreateUserArgs {
 }
 
 export interface CreateUserRow {
-    id: string;
+    id: number;
     username: string;
 }
 

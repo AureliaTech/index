@@ -1,0 +1,451 @@
+{
+  "investment-summary": {
+    "foundedYear": 2017,
+    "companyName": "FastNed Mobility Solutions S.A.",
+    "country": "Netherlands",
+    "industry": "EV Charging Infrastructure",
+    "address": "Stationsplein 45, 1012 AB, Amsterdam, Netherlands",
+    "ownershipPercentage": "52.0%",
+    "coInvestors": "GreenFuture Capital, Aurora Ventures",
+    "executives": {
+      "CEO": "Lena van Dijk",
+      "CFO": "Marc Jansen"
+    },
+    "boardMembers": [
+      "Jeroen Visser (Chairman)",
+      "Lena van Dijk (CEO)",
+      "Isabella Marquez (Board)",
+      "Thomas Chen (Board)",
+      "Sophia Müller (Board)"
+    ],
+    "dealTeam": ["Carlos Alvarez", "Emma Hofman"],
+    "acquisitionDate": "2024-04-15",
+    "realizationDate": null,
+    "entryValuation": {
+      "equityValue": "€120.0 M",
+      "netDebt": "€10.0 M",
+      "enterpriseValue": "€130.0 M"
+    },
+    "latestValuation": {
+      "equityValue": "€265.0 M",
+      "netDebt": "€5.0 M",
+      "enterpriseValue": "€270.0 M"
+    },
+    "committedCapital": "€60 M",
+    "investedCapital": "€45 M",
+    "realizedInvestment": "€20 M",
+    "unrealizedInvestment": "€25 M",
+    "grossIRR": "22.5%",
+    "grossInvestmentMultiple": "3.0x",
+    "netIRR": "16.8%",
+    "netInvestmentMultiple": "2.3x",
+    "companyDescription": "FastNed Mobility Solutions S.A. designs, builds and operates ultra-fast electric vehicle charging stations across Europe. With a focus on renewable energy sourcing and cutting-edge charging technology, FastNed aims to make long-distance electric travel seamless, sustainable and widely accessible."
+  },
+  "dashboard": {
+    "name": "fastned",
+    "netDebt": {
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      "values": [1000000, 950000, 900000, 850000, 800000, 750000]
+    },
+    "revenue": {
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      "actual": [500000, 550000, 600000, 580000, 620000, 650000],
+      "budget": [480000, 520000, 580000, 600000, 610000, 640000]
+    },
+    "capexInvested": {
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      "values": [200000, 250000, 300000, 280000, 320000, 350000]
+    },
+    "operatingChargesByGeography": {
+      "labels": ["North America", "Europe", "Asia", "Other"],
+      "values": [40, 30, 20, 10]
+    }
+  },
+  "valuation": [
+    {
+      "id": "capital-committed",
+      "name": "Capital committed",
+      "units": "EUR million",
+      "values": {
+        "Q2 2024": 100,
+        "Q3 2024": 100,
+        "Q4 2024": 100,
+        "Q1 2025": 100,
+        "Previous quarter": "-",
+        "Previous year": "-"
+      }
+    },
+    {
+      "id": "invested-capital",
+      "name": "Invested capital",
+      "units": "EUR million",
+      "values": {
+        "Q2 2024": 75,
+        "Q3 2024": 75,
+        "Q4 2024": 75,
+        "Q1 2025": 75,
+        "Previous quarter": "-",
+        "Previous year": "-"
+      }
+    },
+    {
+      "id": "realized-investment",
+      "name": "Realized investment",
+      "units": "EUR million",
+      "values": {
+        "Q2 2024": 75,
+        "Q3 2024": 75,
+        "Q4 2024": 75,
+        "Q1 2025": 75,
+        "Previous quarter": "-",
+        "Previous year": "-"
+      }
+    },
+    {
+      "id": "unrealized-investment",
+      "name": "Unrealized investment",
+      "units": "EUR million",
+      "values": {
+        "Q2 2024": 0,
+        "Q3 2024": 0,
+        "Q4 2024": 0,
+        "Q1 2025": 0,
+        "Previous quarter": "-",
+        "Previous year": "-"
+      }
+    },
+    {
+      "id": "gross-irr",
+      "name": "Gross IRR",
+      "units": "%",
+      "values": {
+        "Q2 2024": "25.3%",
+        "Q3 2024": "25.3%",
+        "Q4 2024": "25.3%",
+        "Q1 2025": "25.3%",
+        "Previous quarter": "-",
+        "Previous year": "-"
+      }
+    },
+    {
+      "id": "net-irr",
+      "name": "Net IRR",
+      "units": "%",
+      "values": {
+        "Q2 2024": "18.7%",
+        "Q3 2024": "18.7%",
+        "Q4 2024": "18.7%",
+        "Q1 2025": "18.7%",
+        "Previous quarter": "-",
+        "Previous year": "-"
+      }
+    },
+    {
+      "id": "gross-money-multiple",
+      "name": "Gross money multiple",
+      "units": "x",
+      "values": {
+        "Q2 2024": "3.4x",
+        "Q3 2024": "3.4x",
+        "Q4 2024": "3.4x",
+        "Q1 2025": "3.4x",
+        "Previous quarter": "-",
+        "Previous year": "-"
+      }
+    },
+    {
+      "id": "net-money-multiple",
+      "name": "Net money multiple",
+      "units": "x",
+      "values": {
+        "Q2 2024": "2.7x",
+        "Q3 2024": "2.7x",
+        "Q4 2024": "2.7x",
+        "Q1 2025": "2.7x",
+        "Previous quarter": "-",
+        "Previous year": "-"
+      }
+    }
+  ],
+  "shareholders-structure": {
+    "headers": [
+      { "id": "shareholder", "label": "Shareholder" },
+      { "id": "indirectOwner", "label": "Indirect Owner" },
+      { "id": "year", "label": "Year of Acquisition" },
+      { "id": "ownership", "label": "% Ownership" },
+      { "id": "actions", "label": "Actions" }
+    ],
+    "rows": [
+      {
+        "id": "row-1",
+        "shareholder": "Pontegada Inversiones S.L.",
+        "indirectOwner": "Amancio Ortega Gaona",
+        "year": 2020,
+        "ownership": "50.01%"
+      },
+      {
+        "id": "row-2",
+        "shareholder": "Partler Participaciones S.L.U",
+        "indirectOwner": "Amancio Ortega Gaona",
+        "year": 2020,
+        "ownership": "15.00%"
+      },
+      {
+        "id": "row-3",
+        "shareholder": "Financial Inc.",
+        "indirectOwner": "Financial Inc. G.P",
+        "year": 2023,
+        "ownership": "34.99%"
+      }
+    ]
+  },
+  "deal-team-highlights": [
+    {
+      "title": "Call with new CEO",
+      "date": "2025-01-01T10:00:00Z",
+      "content": "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
+      "author": "Monica Gomez Acebo",
+      "labels": [
+        {
+          "id": 3,
+          "name": "Performance",
+          "color": "grey"
+        }
+      ]
+    },
+    {
+      "title": "Integration for greater efficiency",
+      "date": "2024-10-20T10:00:00Z",
+      "content": "Positive feedback from the new CEO Oscar Garcia Maceiras, on Q1 performance. He was appointed CEO of Inditex on December 2024, succeding Carlos Crespo, as part of the broader leadership reshuffle aimed at ensuring continuity and accelerating Inditex´s global expansion and digital transformation.",
+      "author": "Monica Gomez Acebo",
+      "labels": [
+        {
+          "id": 1,
+          "name": "Competition",
+          "color": "red"
+        },
+        {
+          "id": 2,
+          "name": "Strategy",
+          "color": "blue"
+        },
+        {
+          "id": 3,
+          "name": "Other",
+          "color": "grey"
+        }
+      ]
+    },
+    {
+      "title": "Internal Meeting",
+      "date": "2024-09-10T10:00:00Z",
+      "content": "Internal meeting with the team to discuss the new strategy. We also discussed the new product roadmap.",
+      "author": "Monica Gomez Acebo",
+      "labels": [
+        {
+          "id": 3,
+          "name": "Other",
+          "color": "grey"
+        }
+      ]
+    },
+    {
+      "title": "Bank of America approach",
+      "date": "2024-08-10T10:00:00Z",
+      "content": "Bank of America approach to the market. We discussed the new strategy. We also discussed the new product roadmap.",
+      "author": "Monica Gomez Acebo",
+      "labels": [
+        {
+          "id": 4,
+          "name": "Exit Strategy",
+          "color": "yellow"
+        }
+      ]
+    }
+  ],
+  "reports": {
+    "headers": [
+      { "id": "name", "label": "Name" },
+      { "id": "owner", "label": "Owner" },
+      { "id": "modified", "label": "Last modified" },
+      { "id": "actions", "label": "Actions" }
+    ],
+    "rows": [
+      {
+        "id": "q1-2025",
+        "name": "Q1 2025",
+        "owner": "Financial Inc",
+        "modified": "2025-04-03",
+        "children": [
+          {
+            "id": "q1-2025-quarterly",
+            "title": "Fastned - Quarterly Report 31 March 25"
+          },
+          {
+            "id": "q1-2025-monthly",
+            "title": "Fastned - Monthly Report 31 March 25"
+          }
+        ]
+      },
+      {
+        "id": "fy-2024",
+        "name": "FY 2024",
+        "owner": "Financial Inc",
+        "modified": "2024-11-14"
+      },
+      {
+        "id": "q4-2024",
+        "name": "Q4 2024",
+        "owner": "Financial Inc",
+        "modified": "2024-05-19"
+      },
+      {
+        "id": "q3-2024",
+        "name": "Q3 2024",
+        "owner": "Financial Inc",
+        "modified": "2024-04-21"
+      },
+      {
+        "id": "q2-2024",
+        "name": "Q2 2024",
+        "owner": "Financial Inc",
+        "modified": "2024-03-10"
+      },
+      {
+        "id": "q1-2024",
+        "name": "Q1 2024",
+        "owner": "Financial Inc",
+        "modified": "2024-03-10"
+      },
+      {
+        "id": "fy-2023",
+        "name": "FY 2023",
+        "owner": "Financial Inc",
+        "modified": "2024-03-10"
+      },
+      {
+        "id": "q4-2023",
+        "name": "Q4 2023",
+        "owner": "Financial Inc",
+        "modified": "2024-03-10"
+      },
+      {
+        "id": "q3-2023",
+        "name": "Q3 2023",
+        "owner": "Financial Inc",
+        "modified": "2024-03-10"
+      },
+      {
+        "id": "q2-2023",
+        "name": "Q2 2023",
+        "owner": "Financial Inc",
+        "modified": "2024-03-10"
+      },
+      {
+        "id": "q1-2023",
+        "name": "Q1 2023",
+        "owner": "Financial Inc",
+        "modified": "2024-03-10"
+      },
+      {
+        "id": "fy-2022",
+        "name": "FY 2022",
+        "owner": "Financial Inc",
+        "modified": "2024-03-10"
+      }
+    ]
+  },
+  "documents": {
+    "headers": [
+      { "id": "name", "label": "Name" },
+      { "id": "owner", "label": "Owner" },
+      { "id": "modified", "label": "Last modified" },
+      { "id": "actions", "label": "Actions" }
+    ],
+    "rows": [
+      {
+        "id": "board-meeting",
+        "name": "Board Meeting Documentation",
+        "owner": "Financial Inc",
+        "modified": "2025-04-03"
+      },
+      {
+        "id": "transaction-dd",
+        "name": "Transaction Due Diligence Reports",
+        "owner": "Financial Inc",
+        "modified": "2024-11-14"
+      },
+      {
+        "id": "debt-docs",
+        "name": "Debt Documents",
+        "owner": "Financial Inc",
+        "modified": "2024-05-19"
+      },
+      {
+        "id": "legal-docs",
+        "name": "Legal Documents",
+        "owner": "Financial Inc",
+        "modified": "2024-04-21"
+      },
+      {
+        "id": "broker-reports",
+        "name": "Broker Reports",
+        "owner": "Financial Inc",
+        "modified": "2024-03-10"
+      }
+    ]
+  },
+  "data-collection": {
+    "headers": [
+      { "id": "name", "label": "Name" },
+      { "id": "file", "label": "File name" },
+      { "id": "submittedBy", "label": "Submitted by" },
+      { "id": "submittedAt", "label": "Last submission date" },
+      { "id": "actions", "label": "Actions" }
+    ],
+    "rows": [
+      {
+        "id": "row-1",
+        "name": "Fastned – Financial and operational information 31 March 2025",
+        "file": "External_ReportingMar25.xls",
+        "submittedBy": "Mariana Lopez Briales",
+        "submittedAt": "2025-04-02T22:30:00"
+      },
+      {
+        "id": "row-2",
+        "name": "Fastned – Quarterly Valuation 31 March 2025",
+        "file": "Valuation_Mar25.xls",
+        "submittedBy": "Mariana Lopez Briales",
+        "submittedAt": "2025-04-15T08:30:00"
+      },
+      {
+        "id": "row-3",
+        "name": "Fastned – Financial and operational information 28 February 2025",
+        "file": "External_ReportingFeb25.xls",
+        "submittedBy": "Mónica Gomez Acebo",
+        "submittedAt": "2025-03-08T15:45:00"
+      },
+      {
+        "id": "row-4",
+        "name": "Fastned – Financial and operational information 31 January 2025",
+        "file": "External_ReportingJan25.xls",
+        "submittedBy": "Mónica Gomez Acebo",
+        "submittedAt": "2025-02-08T15:30:00"
+      },
+      {
+        "id": "row-5",
+        "name": "Fastned – Quarterly Valuation 31 December 2024",
+        "file": "Valuation_Dec24.xls",
+        "submittedBy": "Mariana Lopez Briales",
+        "submittedAt": "2025-02-02T12:30:00"
+      },
+      {
+        "id": "row-6",
+        "name": "Fastned – Financial and operational information 31 December 2024",
+        "file": "External_ReportingDec24.xls",
+        "submittedBy": "Mónica Gomez Acebo",
+        "submittedAt": "2025-01-15T11:25:00"
+      }
+    ]
+  }
+}

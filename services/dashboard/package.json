@@ -6,13 +6,15 @@
   "scripts": {
     "dev": "vinxi dev",
     "build": "vinxi build",
-    "start": "vinxi start"
+    "start": "vinxi start",
+    "seed": "tsx scripts/seed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@deepgram/sdk": "^4.7.0",
     "@tailwindcss/vite": "^4.1.8",
     "@tanstack/react-router": "^1.120.20",
     "@tanstack/react-start": "^1.120.20",
@@ -26,10 +28,11 @@
     "vinxi": "^0.5.6"
   },
   "devDependencies": {
-		"@biomejs/biome": "2.0.4",
+    "@biomejs/biome": "2.0.4",
     "@types/pg": "^8.15.4",
     "@types/react": "^19.1.8",
     "@vitejs/plugin-react": "^4.5.1",
+    "tsx": "^4.20.3",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

@@ -1,4 +1,10 @@
-[{
-  "id": "inditex",
-  "type": "investment"
-}]
+[
+  {
+    "id": "inditex",
+    "type": "investment"
+  },
+  {
+    "id": "fastned",
+    "type": "investment"
+  }
+]

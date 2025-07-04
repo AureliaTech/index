@@ -79,6 +79,7 @@ export const Route = createFileRoute('/funds/$name')({
   beforeLoad: ({ params, search }) => {
     return {
       breadcrumb: params.name,
+      favoriteKey: params.name,
       tabs: [
         {
           label: "Dashboard",

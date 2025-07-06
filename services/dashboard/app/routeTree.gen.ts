@@ -17,6 +17,7 @@ import { Route as InvestmentsImport } from './routes/investments'
 import { Route as FundsImport } from './routes/funds'
 import { Route as AiImport } from './routes/ai'
 import { Route as IndexImport } from './routes/index'
+import { Route as MobileIndexImport } from './routes/mobile/index'
 import { Route as InvestmentsIndexImport } from './routes/investments/index'
 import { Route as FundsIndexImport } from './routes/funds/index'
 import { Route as SettingsUsersImport } from './routes/settings/users'
@@ -31,6 +32,7 @@ import { Route as SettingsInvestmentsImport } from './routes/settings/investment
 import { Route as SettingsFundsImport } from './routes/settings/funds'
 import { Route as SettingsBillingImport } from './routes/settings/billing'
 import { Route as SettingsAuditLogsImport } from './routes/settings/audit-logs'
+import { Route as MobileNewDthImport } from './routes/mobile/new-dth'
 import { Route as MobileIdImport } from './routes/mobile/$id'
 import { Route as InvestmentsNewImport } from './routes/investments/new'
 import { Route as InvestmentsNameImport } from './routes/investments/$name'
@@ -95,6 +97,12 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const MobileIndexRoute = MobileIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MobileRoute,
 } as any)
 
 const InvestmentsIndexRoute = InvestmentsIndexImport.update({
@@ -181,6 +189,12 @@ const SettingsAuditLogsRoute = SettingsAuditLogsImport.update({
   id: '/audit-logs',
   path: '/audit-logs',
   getParentRoute: () => SettingsRoute,
+} as any)
+
+const MobileNewDthRoute = MobileNewDthImport.update({
+  id: '/new-dth',
+  path: '/new-dth',
+  getParentRoute: () => MobileRoute,
 } as any)
 
 const MobileIdRoute = MobileIdImport.update({
@@ -434,6 +448,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MobileIdImport
       parentRoute: typeof MobileImport
     }
+    '/mobile/new-dth': {
+      id: '/mobile/new-dth'
+      path: '/new-dth'
+      fullPath: '/mobile/new-dth'
+      preLoaderRoute: typeof MobileNewDthImport
+      parentRoute: typeof MobileImport
+    }
     '/settings/audit-logs': {
       id: '/settings/audit-logs'
       path: '/audit-logs'
@@ -531,6 +552,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/investments/'
       preLoaderRoute: typeof InvestmentsIndexImport
       parentRoute: typeof InvestmentsImport
+    }
+    '/mobile/': {
+      id: '/mobile/'
+      path: '/'
+      fullPath: '/mobile/'
+      preLoaderRoute: typeof MobileIndexImport
+      parentRoute: typeof MobileImport
     }
     '/funds/$name/cash-flow': {
       id: '/funds/$name/cash-flow'
@@ -810,10 +838,14 @@ const InvestmentsRouteWithChildren = InvestmentsRoute._addFileChildren(
 
 interface MobileRouteChildren {
   MobileIdRoute: typeof MobileIdRoute
+  MobileNewDthRoute: typeof MobileNewDthRoute
+  MobileIndexRoute: typeof MobileIndexRoute
 }
 
 const MobileRouteChildren: MobileRouteChildren = {
   MobileIdRoute: MobileIdRoute,
+  MobileNewDthRoute: MobileNewDthRoute,
+  MobileIndexRoute: MobileIndexRoute,
 }
 
 const MobileRouteWithChildren =
@@ -881,6 +913,7 @@ export interface FileRoutesByFullPath {
   '/investments/$name': typeof InvestmentsNameRouteWithChildren
   '/investments/new': typeof InvestmentsNewRoute
   '/mobile/$id': typeof MobileIdRoute
+  '/mobile/new-dth': typeof MobileNewDthRoute
   '/settings/audit-logs': typeof SettingsAuditLogsRoute
   '/settings/billing': typeof SettingsBillingRoute
   '/settings/funds': typeof SettingsFundsRoute
@@ -895,6 +928,7 @@ export interface FileRoutesByFullPath {
   '/settings/users': typeof SettingsUsersRouteWithChildren
   '/funds/': typeof FundsIndexRoute
   '/investments/': typeof InvestmentsIndexRoute
+  '/mobile/': typeof MobileIndexRoute
   '/funds/$name/cash-flow': typeof FundsNameCashFlowRoute
   '/funds/$name/dashboard': typeof FundsNameDashboardRoute
   '/funds/$name/documents': typeof FundsNameDocumentsRoute
@@ -922,11 +956,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
-  '/mobile': typeof MobileRouteWithChildren
   '/settings': typeof SettingsRouteWithChildren
   '/funds/new': typeof FundsNewRoute
   '/investments/new': typeof InvestmentsNewRoute
   '/mobile/$id': typeof MobileIdRoute
+  '/mobile/new-dth': typeof MobileNewDthRoute
   '/settings/audit-logs': typeof SettingsAuditLogsRoute
   '/settings/billing': typeof SettingsBillingRoute
   '/settings/funds': typeof SettingsFundsRoute
@@ -941,6 +975,7 @@ export interface FileRoutesByTo {
   '/settings/users': typeof SettingsUsersRouteWithChildren
   '/funds': typeof FundsIndexRoute
   '/investments': typeof InvestmentsIndexRoute
+  '/mobile': typeof MobileIndexRoute
   '/funds/$name/cash-flow': typeof FundsNameCashFlowRoute
   '/funds/$name/dashboard': typeof FundsNameDashboardRoute
   '/funds/$name/documents': typeof FundsNameDocumentsRoute
@@ -978,6 +1013,7 @@ export interface FileRoutesById {
   '/investments/$name': typeof InvestmentsNameRouteWithChildren
   '/investments/new': typeof InvestmentsNewRoute
   '/mobile/$id': typeof MobileIdRoute
+  '/mobile/new-dth': typeof MobileNewDthRoute
   '/settings/audit-logs': typeof SettingsAuditLogsRoute
   '/settings/billing': typeof SettingsBillingRoute
   '/settings/funds': typeof SettingsFundsRoute
@@ -992,6 +1028,7 @@ export interface FileRoutesById {
   '/settings/users': typeof SettingsUsersRouteWithChildren
   '/funds/': typeof FundsIndexRoute
   '/investments/': typeof InvestmentsIndexRoute
+  '/mobile/': typeof MobileIndexRoute
   '/funds/$name/cash-flow': typeof FundsNameCashFlowRoute
   '/funds/$name/dashboard': typeof FundsNameDashboardRoute
   '/funds/$name/documents': typeof FundsNameDocumentsRoute
@@ -1030,6 +1067,7 @@ export interface FileRouteTypes {
     | '/investments/$name'
     | '/investments/new'
     | '/mobile/$id'
+    | '/mobile/new-dth'
     | '/settings/audit-logs'
     | '/settings/billing'
     | '/settings/funds'
@@ -1044,6 +1082,7 @@ export interface FileRouteTypes {
     | '/settings/users'
     | '/funds/'
     | '/investments/'
+    | '/mobile/'
     | '/funds/$name/cash-flow'
     | '/funds/$name/dashboard'
     | '/funds/$name/documents'
@@ -1070,11 +1109,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ai'
-    | '/mobile'
     | '/settings'
     | '/funds/new'
     | '/investments/new'
     | '/mobile/$id'
+    | '/mobile/new-dth'
     | '/settings/audit-logs'
     | '/settings/billing'
     | '/settings/funds'
@@ -1089,6 +1128,7 @@ export interface FileRouteTypes {
     | '/settings/users'
     | '/funds'
     | '/investments'
+    | '/mobile'
     | '/funds/$name/cash-flow'
     | '/funds/$name/dashboard'
     | '/funds/$name/documents'
@@ -1124,6 +1164,7 @@ export interface FileRouteTypes {
     | '/investments/$name'
     | '/investments/new'
     | '/mobile/$id'
+    | '/mobile/new-dth'
     | '/settings/audit-logs'
     | '/settings/billing'
     | '/settings/funds'
@@ -1138,6 +1179,7 @@ export interface FileRouteTypes {
     | '/settings/users'
     | '/funds/'
     | '/investments/'
+    | '/mobile/'
     | '/funds/$name/cash-flow'
     | '/funds/$name/dashboard'
     | '/funds/$name/documents'
@@ -1224,7 +1266,9 @@ export const routeTree = rootRoute
     "/mobile": {
       "filePath": "mobile.tsx",
       "children": [
-        "/mobile/$id"
+        "/mobile/$id",
+        "/mobile/new-dth",
+        "/mobile/"
       ]
     },
     "/settings": {
@@ -1283,6 +1327,10 @@ export const routeTree = rootRoute
     },
     "/mobile/$id": {
       "filePath": "mobile/$id.tsx",
+      "parent": "/mobile"
+    },
+    "/mobile/new-dth": {
+      "filePath": "mobile/new-dth.tsx",
       "parent": "/mobile"
     },
     "/settings/audit-logs": {
@@ -1345,6 +1393,10 @@ export const routeTree = rootRoute
     "/investments/": {
       "filePath": "investments/index.tsx",
       "parent": "/investments"
+    },
+    "/mobile/": {
+      "filePath": "mobile/index.tsx",
+      "parent": "/mobile"
     },
     "/funds/$name/cash-flow": {
       "filePath": "funds/$name/cash-flow.tsx",

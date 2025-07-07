@@ -4,6 +4,7 @@ import { createServerFn } from "@tanstack/react-start";
 import * as fs from "node:fs/promises";
 import { getInvestments } from "../../functions/company";
 import { createDealTeamHighlight } from "../../functions/deal-team-highlights";
+import { summarizeTranscript } from "../../functions/summarize";
 import { Plus } from "lucide-react";
 
 // Transcribe base64-encoded audio using Deepgram. Also store the raw audio under app/data/<company>/
@@ -169,18 +170,35 @@ function MobileRecorderPage() {
         return;
       }
 
-      await createDealTeamHighlight({
+      // ------- Summarize transcript with OpenAI before persisting --------
+      const { summary } = await summarizeTranscript({
+        data: { transcript },
+      } as any);
+
+      const title = summary?.title?.slice(0, 250) ||
+        transcript.slice(0, 40) ||
+        "Audio note";
+      const description = summary?.content || transcript;
+      const labels = Array.isArray(summary?.labels)
+        ? summary.labels.map((text: string) => ({ color: "blue", text }))
+        : [];
+
+      const { highlight } = await createDealTeamHighlight({
         data: {
           companyId: Number(selectedCompany),
-          title: transcript.slice(0, 40) || "Audio note",
-          description: transcript,
+          title,
+          description,
           authorId: 1, // TODO: replace with actual user id when available
-          labels: [],
+          labels,
         },
       } as any);
 
-      setSaved(true);
-      router.navigate({ to: "/mobile/$id", params: { id: selectedCompany } });
+      if (highlight?.id) {
+        setSaved(true);
+        router.navigate({ to: "/mobile/$id", params: { id: String(highlight.id) } });
+      } else {
+        console.error("Failed to obtain highlight id after creation");
+      }
     } catch (err) {
       console.error(err);
     } finally {

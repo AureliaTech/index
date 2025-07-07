@@ -9,7 +9,7 @@ export const summarizeTranscript = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     try {
       const openai = new OpenAI({
-        // Prefer environment variable; if undefined OpenAI SDK will throw.
+        // TODO: Use environment variable
         apiKey: "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"
       });
 
